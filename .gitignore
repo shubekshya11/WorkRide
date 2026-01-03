@@ -1,0 +1,14 @@
+# Ignore vscode settings
+.vscode/
+
+# Ignore the sql files
+*.sql
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore github files
+/.github
+
+# Ignore docs folder
+/.docs

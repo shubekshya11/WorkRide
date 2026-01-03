@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  ::selection {
+    @apply bg-teal-950 text-teal-100 dark:bg-teal-100 dark:text-teal-950;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #5eead4 transparent;
+  }
+
+  .scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #5eead4 transparent;
+  }
+
+  /* ::-webkit-scrollbar {
+    @apply w-0;
+  }
+
+  .scroll::-webkit-scrollbar {
+    @apply w-1 rounded-full bg-light;
+  }
+
+  .scroll::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-orange-300;
+  } */
+
+  /* ::-webkit-scrollbar {
+        @apply w-2 rounded-full bg-transparent;
+      }
+    
+      ::-webkit-scrollbar-track {
+        @apply bg-transparent rounded-full;
+      }
+    
+      ::-webkit-scrollbar-thumb {
+        @apply bg-coffee-700 rounded-full border border-solid border-coffee-400;
+      }
+    
+      ::-webkit-scrollbar-thumb:hover {
+        @apply bg-coffee-800;
+      } */
+
+  body {
+    @apply max-w-[100vw] !overflow-x-hidden bg-white font-body text-teal-950 dark:bg-dark dark:text-teal-50;
+  }
+
+  main,
+  section,
+  div {
+    @apply !font-body;
+  }
+
+  .navlink,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-body font-semibold;
+  }
+
+  label,
+  a,
+  input,
+  textarea,
+  button,
+  ul,
+  li {
+    @apply font-body font-normal;
+  }
+
+  p,
+  span {
+    @apply font-body font-light;
+  }
+
+  nav,
+  footer,
+  main {
+    @apply relative z-10 px-4 py-8 sm:py-12 md:px-12 md:py-12 lg:py-16 xl:px-16 xl:py-24;
+  }
+
+  /* section {
+        @apply py-24 md:py-32 lg:py-48 px-4;
+      } */
+
+  .filter-white {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%)
+      hue-rotate(288deg) brightness(102%) contrast(102%);
+  }
+
+  .filter-black {
+    filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(7500%)
+      hue-rotate(327deg) brightness(96%) contrast(104%);
+  }
+
+  .filter-dark {
+    filter: brightness(0) saturate(100%) invert(6%) sepia(13%) saturate(4069%)
+      hue-rotate(136deg) brightness(105%) contrast(105%);
+  }
+
+  .filter-primary {
+    filter: brightness(0) saturate(100%) invert(81%) sepia(28%) saturate(783%)
+      hue-rotate(113deg) brightness(103%) contrast(84%) blur(100px);
+  }
+
+  .transition-150 {
+    @apply transition-all duration-150 ease-linear;
+  }
+
+  .transition-300 {
+    @apply transition-all duration-300 ease-linear;
+  }
+
+  .transition-700 {
+    @apply transition-all duration-700 ease-in-out;
+  }
+
+  .transition-1000 {
+    @apply transition-all duration-1000;
+  }
+
+  .navlink {
+    @apply origin-right rounded-full px-4 py-2.5 text-xs font-normal capitalize transition-all duration-100 group-hover:bg-teal-300 group-hover:uppercase group-hover:tracking-widest group-hover:text-teal-50;
+  }
+
+  .sticky-navlink {
+    @apply origin-right rounded-full px-3 py-1.5 text-xs font-normal capitalize transition-all duration-100 group-hover:bg-teal-300 group-hover:uppercase group-hover:tracking-widest group-hover:text-teal-50 md:px-4 md:py-2.5;
+  }
+
+  .overlay {
+    @apply pointer-events-none absolute inset-0 z-0 select-none bg-black/20;
+  }
+
+  .bg-teal-300:hover {
+    @apply bg-teal-500 shadow-lg transition-all duration-300 ease-linear;
+  }
+
+  input:focus-visible,
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:focus-visible,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:focus-visible,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    @apply border-none outline-none transition-[background-color] delay-0 duration-[5000s] ease-in-out;
+  }
+}
+
+.Toastify__toast {
+  @apply w-[90%] !text-sm sm:w-full sm:!min-w-[28rem];
+}
+
+.no-scroll {
+  overflow: hidden;
+}
