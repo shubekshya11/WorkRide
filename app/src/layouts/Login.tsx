@@ -144,10 +144,16 @@ const Login = () => {
           ))}
 
           <div className="my-6">
-            <ReCAPTCHA
-              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              onChange={handleRecaptchaChange}
-            />
+            {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+              <ReCAPTCHA
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                onChange={handleRecaptchaChange}
+              />
+            ) : (
+              <div className="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+                Warning: VITE_RECAPTCHA_SITE_KEY is not configured. Please set it in your .env file.
+              </div>
+            )}
           </div>
 
           <div className="mb-6 flex items-center justify-between">

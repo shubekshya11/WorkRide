@@ -64,5 +64,11 @@ export default defineConfig({
       // Only proxy /logs and its subpaths, not /logs-dashboard
       '^/logs($|/)': 'http://localhost:3000',
     },
+    // Ensure all routes fall back to index.html for SPA routing
+    fs: {
+      strict: false,
+    },
   },
+  // Ensure Vite serves index.html for all routes (SPA fallback)
+  appType: 'spa',
 });

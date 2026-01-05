@@ -70,7 +70,6 @@ const App: React.FC = () => {
                 <Route path={ROUTE_BRAND} element={<Brand />} />
                 <Route path={ROUTE_LEGAL} element={<LegalPage />} />
                 <Route path={ROUTE_LEADERBOARD} element={<Leaderboard />} />
-                <Route path={ROUTE_404} element={<Error404 />} />
 
                 {/* Guest Routes - Only for unauthenticated users */}
                 <Route
@@ -139,6 +138,9 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+
+                {/* Catch-all route - Must be last */}
+                <Route path={ROUTE_404} element={<Error404 />} />
               </Routes>
               <Footer />
             </SocketManager>
