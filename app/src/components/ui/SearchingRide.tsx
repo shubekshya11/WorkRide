@@ -1,9 +1,17 @@
 import error from '../../assets/vector/passenger.svg';
 
-const SearchingRide = () => {
+interface SearchingRideProps {
+  heading?: string;
+  message?: string;
+}
+
+const SearchingRide = ({
+  heading = 'Searching for a match',
+  message = 'Please wait while we search for available rides.',
+}: SearchingRideProps) => {
   return (
     <>
-      <main className="relative flex size-full flex-col items-center justify-center overflow-hidden bg-white p-5 shadow-lg dark:bg-dark">
+      <main className="relative flex size-full flex-col items-center justify-center overflow-hidden bg-teal-100 p-5 shadow-lg dark:bg-dark">
         <div className="pointer-events-none absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-teal-300 opacity-40 blur-[100px]" />
         <div className="pointer-events-none absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-teal-300 opacity-80 blur-[200px]" />
         <img
@@ -12,8 +20,11 @@ const SearchingRide = () => {
           className="-mt-12 h-auto w-96 animate-floating-up select-none object-contain md:h-[60vh] md:w-auto"
           draggable="false"
         />
-        <p className="mt-4 inline-flex flex-wrap items-center justify-center gap-2 text-center font-light">
-          Please wait while we search for available rides.
+        <h2 className="mt-4 text-center text-xl font-semibold text-teal-950 md:text-2xl">
+          {heading}
+        </h2>
+        <p className="mt-2 inline-flex max-w-md flex-wrap items-center justify-center gap-2 text-center text-sm font-light md:text-base">
+          {message}
           <svg
             className="size-6 animate-spin text-teal-500"
             xmlns="http://www.w3.org/2000/svg"

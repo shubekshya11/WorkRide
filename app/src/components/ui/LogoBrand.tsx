@@ -1,7 +1,3 @@
-import commutoLogo from '../../assets/logo/commuto.svg';
-import commutoLogoAlt from '../../assets/logo/commuto-alt.svg';
-import commutoIcon from '../../assets/logo/commuto-icon.svg';
-import commutoIconAlt from '../../assets/logo/commuto-icon-alt.svg';
 import { useState } from 'react';
 
 const LogoBrand = () => {
@@ -36,16 +32,16 @@ const LogoBrand = () => {
             onClick={() => setToggleLogo((prev) => !prev)}
             aria-pressed={toggleLogo}
           ></button>
-          <img
-            src={toggleLogo ? commutoLogoAlt : commutoLogo}
-            alt={toggleLogo ? 'Commuto Logo Alt' : 'Commuto Logo'}
-            className="h-auto max-w-full scale-75 md:scale-100"
-          />
+          <h1
+            className={`text-6xl font-bold md:text-7xl lg:text-8xl ${toggleLogo ? 'text-dark' : 'text-light'}`}
+          >
+            WorkRide
+          </h1>
         </div>
       </div>
       <div className="space-y-10">
         <p className="text-sm">
-          Commuto Smiley is used as the app icon for mobile and desktop
+          WorkRide Smiley is used as the app icon for mobile and desktop
           applications. It is designed to be simple, recognizable, and
           versatile, ensuring that it stands out in various contexts while
           maintaining brand consistency.
@@ -60,11 +56,11 @@ const LogoBrand = () => {
             onClick={() => setToggleIcon((prev) => !prev)}
             aria-pressed={toggleIcon}
           ></button>
-          <img
-            src={toggleIcon ? commutoIconAlt : commutoIcon}
-            alt={toggleIcon ? 'Commuto Icon Alt' : 'Commuto Icon'}
-            className={`size-auto scale-75 rounded-3xl object-contain md:scale-100 ${toggleIcon ? 'shadow-lg' : 'shadow-none'}`}
-          />
+          <h1
+            className={`text-4xl font-bold md:text-5xl lg:text-6xl ${toggleIcon ? 'text-dark' : 'text-light'} rounded-3xl p-4 ${toggleIcon ? 'shadow-lg' : 'shadow-none'}`}
+          >
+            WorkRide
+          </h1>
         </div>
       </div>
       <p className="text-muted-foreground text-xs">

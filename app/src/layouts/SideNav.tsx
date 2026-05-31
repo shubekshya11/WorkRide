@@ -54,7 +54,7 @@ const SideNav: React.FC<SideNavProps> = ({
               type="button"
               aria-label="Close Menu"
               onClick={closeNav}
-              className="transition-100 rounded-full bg-dark/50 p-0.5 text-lg text-teal-50 hover:bg-teal-300 hover:text-dark dark:bg-light/30 dark:text-light dark:hover:bg-teal-500 dark:hover:text-dark"
+              className="transition-100 rounded-full bg-teal-900/80 p-0.5 text-lg text-teal-100 hover:bg-teal-300"
             >
               <IoClose />
             </button>
@@ -69,7 +69,7 @@ const SideNav: React.FC<SideNavProps> = ({
                 <NavLink
                   to={link.link}
                   className={({ isActive }) =>
-                    `navlink ${isActive ? 'bg-teal-700 text-light dark:bg-teal-500 dark:text-dark' : 'bg-dark/50 text-light dark:bg-light/30 dark:text-light'}`
+                    `navlink ${isActive ? 'bg-teal-300 text-teal-100' : 'bg-teal-900/80 text-teal-100'}`
                   }
                 >
                   {link.title}
@@ -87,7 +87,7 @@ const SideNav: React.FC<SideNavProps> = ({
                   key={link.id}
                   to={link.link}
                   className={({ isActive }) =>
-                    `transition-150 inline-flex items-center gap-2 rounded-full py-3 pl-4 pr-5 text-xs font-normal transition-colors duration-200 hover:bg-teal-400 hover:text-dark ${isActive ? 'bg-teal-700 text-light dark:bg-teal-500 dark:text-dark' : 'bg-dark/50 text-light dark:bg-light/30 dark:text-light'}`
+                    `transition-150 inline-flex items-center gap-2 rounded-full py-3 pl-4 pr-5 text-xs font-normal transition-colors duration-200 hover:bg-teal-200 hover:text-teal-950 ${isActive ? 'bg-teal-300 text-teal-100' : 'bg-teal-900/80 text-teal-100'}`
                   }
                 >
                   {link.icon}
@@ -103,7 +103,7 @@ const SideNav: React.FC<SideNavProps> = ({
             {userName ? (
               <Link
                 to={ROUTE_PROFILE}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-teal-100 py-2 pl-4 pr-5 text-sm font-semibold text-teal-600 md:hidden md:text-base"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-teal-200 py-2 pl-4 pr-5 text-sm font-semibold text-teal-950 md:hidden md:text-base"
               >
                 <span className="animate-wave">&#128075;</span>
                 Hi, {userName}!
@@ -111,7 +111,7 @@ const SideNav: React.FC<SideNavProps> = ({
             ) : (
               <Link
                 to={ROUTE_LOGIN}
-                className="inline-flex rounded-full bg-teal-300 px-6 py-2 font-semibold dark:text-dark md:hidden"
+                className="inline-flex rounded-full bg-teal-300 px-6 py-2 font-semibold text-teal-100 md:hidden"
               >
                 Login
               </Link>

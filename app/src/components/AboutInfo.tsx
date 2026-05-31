@@ -8,8 +8,8 @@ import { ROUTE_ABOUT } from '../constants/routes';
 const AboutInfo = () => {
   return (
     <>
-      <section className="relative z-10 h-auto bg-teal-200 bg-[radial-gradient(circle,_#2dd4bf_10%,_transparent_10%),_radial-gradient(circle,_#f5f5f5_10%,_transparent_10%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px] px-0 py-0 dark:bg-teal-500/50 dark:bg-[radial-gradient(circle,_rgba(94,234,212,0.2)_10%,_transparent_10%),_radial-gradient(circle,_rgba(240,253,250,0.2)_10%,_transparent_10%)] xl:h-screen">
-        <div className="pointer-events-none absolute inset-0 -z-10 size-full select-none bg-gradient-to-b from-white via-transparent to-teal-300 dark:from-dark dark:via-transparent dark:to-dark"></div>
+      <section className="relative z-10 h-auto bg-teal-100 bg-[radial-gradient(circle,_#C4B5D9_12%,_transparent_12%),_radial-gradient(circle,_#F5F0E8_12%,_transparent_12%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px] px-0 py-0 xl:h-screen">
+        <div className="pointer-events-none absolute inset-0 -z-10 size-full select-none bg-gradient-to-b from-teal-100 via-transparent to-teal-200"></div>
         <div className="flex h-full flex-col justify-between gap-0 sm:gap-16 md:items-center xl:flex-row xl:gap-0">
           {/* <img
             src={nepal}
@@ -24,7 +24,7 @@ const AboutInfo = () => {
             </h2>
 
             <p className="max-w-2xl font-body text-xs dark:text-shadow-dark sm:text-sm md:text-sm">
-              Commuto is the platform that connects your co-workers sharing the
+              WorkRide is the platform that connects your co-workers sharing the
               same route to work. Share resources, reduce your carbon footprint,
               save money, and step towards a greener planet and sustainable
               future. We are committed to making a positive impact on the
@@ -34,14 +34,14 @@ const AboutInfo = () => {
 
             <Link
               to={ROUTE_ABOUT}
-              className="transition-150 group mt-4 flex items-center gap-2.5 rounded-full bg-dark px-4 py-3 pr-5 text-sm font-light text-light shadow-lg hover:bg-teal-600 sm:text-sm md:mt-10"
+              className="transition-150 group mt-4 flex items-center gap-2.5 rounded-full bg-teal-300 px-4 py-3 pr-5 text-sm font-light text-teal-100 shadow-lg hover:bg-teal-800 sm:text-sm md:mt-10"
             >
               <img
                 src={logo}
                 alt="Logo"
                 className="group-hover:filter-white transition-150 size-4 object-contain sm:size-5"
               />
-              More About Commuto
+              More About WorkRide
             </Link>
           </div>
           {/* <img

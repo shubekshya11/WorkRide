@@ -1,40 +1,40 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// import { useEffect, useRef } from 'react';
+// import { gsap } from 'gsap';
+// import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Title from './ui/Title';
-import rideBuddy from '../assets/ride.webp';
-import introVideo from '../assets/videos/demo.mp4';
-import iPhoneMockup from '../assets/mockups/iPhone.webp';
-import introPoster from '../assets/mockups/imagePoster.webp';
+// import rideBuddy from '../assets/ride.webp';
+// import introVideo from '../assets/videos/demo.mp4';
+// import iPhoneMockup from '../assets/mockups/iPhone.webp';
+// import introPoster from '../assets/mockups/imagePoster.webp';
 
-gsap.registerPlugin(ScrollTrigger);
+// gsap.registerPlugin(ScrollTrigger);
 
 const Intro = () => {
-  const videoContainerRef = useRef(null);
+  // const videoContainerRef = useRef(null);
 
-  useEffect(() => {
-    const element = videoContainerRef.current;
+  // useEffect(() => {
+  //   const element = videoContainerRef.current;
 
-    gsap.fromTo(
-      element,
-      { scale: 1 }, // Start scale
-      {
-        scale: 0.75, // End scale
-        scrollTrigger: {
-          trigger: element, // Element to watch
-          start: 'top center', // Start animation when the element reaches the center of the viewport
-          end: '+=500', // End animation after scrolling 500px
-          scrub: true, // Smooth scrubbing effect
-        },
-        ease: 'power1.out', // Smooth easing
-      },
-    );
-  }, []);
+  //   gsap.fromTo(
+  //     element,
+  //     { scale: 1 }, // Start scale
+  //     {
+  //       scale: 0.75, // End scale
+  //       scrollTrigger: {
+  //         trigger: element, // Element to watch
+  //         start: 'top center', // Start animation when the element reaches the center of the viewport
+  //         end: '+=500', // End animation after scrolling 500px
+  //         scrub: true, // Smooth scrubbing effect
+  //       },
+  //       ease: 'power1.out', // Smooth easing
+  //     },
+  //   );
+  // }, []);
 
   return (
     <main className="relative overflow-hidden lg:pb-0">
-      <div className="absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-teal-300 opacity-40 blur-[100px]" />
-      <div className="absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-teal-300 opacity-80 blur-[200px]" />
+      <div className="absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-teal-200 opacity-50 blur-[100px]" />
+      <div className="absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-teal-200 opacity-40 blur-[200px]" />
       <Title
         title="Connecting Co-workers & Students sharing the same route"
         description="We are a community of professionals and students who share the same
@@ -53,11 +53,12 @@ const Intro = () => {
             reduce your carbon footprint and step towards a more sustainable
             future.
           </p>
-          <h3 className="bg-white/50 pt-4 text-4xl text-teal-400 dark:bg-dark/50 md:pt-10 md:text-5xl xl:text-6xl">
+          <h3 className="bg-teal-100/80 pt-4 text-4xl text-teal-700 md:pt-10 md:text-5xl xl:text-6xl">
             Ride. Enjoy. Save.
           </h3>
         </div>
-        <div
+        {/* Mobile display (iPhone mockup + demo video) — hidden for now */}
+        {/* <div
           ref={videoContainerRef}
           className="relative order-1 flex flex-1 justify-center lg:order-2"
         >
@@ -81,7 +82,7 @@ const Intro = () => {
             </video>
             <img
               src={iPhoneMockup}
-              alt="Commuto"
+              alt="WorkRide"
               className="pointer-events-none absolute inset-0 translate-y-8"
               draggable="false"
               width={750}
@@ -97,15 +98,15 @@ const Intro = () => {
             alt="Ride Buddy"
             className="filter-white dark:filter-dark absolute -top-6 z-10 h-6 w-full animate-floating object-contain"
           />
-        </div>
+        </div> */}
         <div className="order-3 flex flex-1 flex-col items-end justify-end space-y-6 md:space-y-12 lg:space-y-20">
           <h2 className="max-w-sm text-base leading-snug xl:text-xl">
-            Our <strong className="bg-teal-100 text-teal-700">Vision</strong> is
+            Our <strong className="bg-teal-200 text-teal-950">Vision</strong> is
             to live in a world where we all share resources to better preserve
             our economy and planet.
           </h2>
           <h2 className="max-w-sm text-base leading-snug xl:text-xl">
-            Our <strong className="bg-teal-100 text-teal-700">Mission</strong>{' '}
+            Our <strong className="bg-teal-200 text-teal-950">Mission</strong>{' '}
             is to fill the empty seats in our ride and make our commute more
             affordable and sustainable.
           </h2>

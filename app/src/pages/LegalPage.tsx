@@ -49,8 +49,8 @@ const LegalPage = () => {
 
       <main>
         <CtoUI
-          title="Join Commuto Today!"
-          description="Together, we can create a more sustainable future. Start your journey with Commuto today. Be it as a Rider or a Passenger, every ride counts towards reducing our carbon footprint."
+          title="Join WorkRide Today!"
+          description="Together, we can create a more sustainable future. Start your journey with WorkRide today. Be it as a Rider or a Passenger, every ride counts towards reducing our carbon footprint."
         />
       </main>
     </>

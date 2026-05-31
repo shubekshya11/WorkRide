@@ -155,7 +155,7 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
   };
 
   return (
-    <div className="mt-4 overflow-x-auto rounded-3xl border border-teal-300/60 bg-white shadow-lg dark:bg-dark">
+    <div className="mt-4 overflow-x-auto rounded-3xl border border-teal-300/60 bg-teal-100 shadow-lg dark:bg-dark">
       <table className="w-full text-xs xl:text-sm">
         <thead className="bg-teal-100 dark:bg-teal-900">
           <tr>

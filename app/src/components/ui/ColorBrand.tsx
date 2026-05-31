@@ -1,21 +1,21 @@
 const brandColors = [
-  { name: 'Primary', hex: '#5eead4', tailwind: 'bg-teal-300' },
-  { name: 'Dark', hex: '#001312', tailwind: 'bg-dark' },
-  { name: 'Light', hex: '#f5f5f5', tailwind: 'bg-light' },
+  { name: 'Primary (Navy)', hex: '#1B2B5E', tailwind: 'bg-teal-300' },
+  { name: 'Surface (Beige)', hex: '#F5F0E8', tailwind: 'bg-teal-100' },
+  { name: 'Accent (Purple)', hex: '#C4B5D9', tailwind: 'bg-teal-200' },
 ];
 
 const colorPalette = [
-  { name: 'teal-50', hex: '#f0fdfa' },
-  { name: 'teal-100', hex: '#ccfbf1' },
-  { name: 'teal-200', hex: '#99f6e4' },
-  { name: 'teal-300', hex: '#5eead4' },
-  { name: 'teal-400', hex: '#2dd4bf' },
-  { name: 'teal-500', hex: '#14b8a6' },
-  { name: 'teal-600', hex: '#0d9488' },
-  { name: 'teal-700', hex: '#0f766e' },
-  { name: 'teal-800', hex: '#115e59' },
-  { name: 'teal-900', hex: '#134e4a' },
-  { name: 'teal-950', hex: '#042f2e' },
+  { name: 'teal-50', hex: '#FAF7F2' },
+  { name: 'teal-100', hex: '#F5F0E8' },
+  { name: 'teal-200', hex: '#C4B5D9' },
+  { name: 'teal-300', hex: '#1B2B5E' },
+  { name: 'teal-400', hex: '#A899C4' },
+  { name: 'teal-500', hex: '#6B7BA8' },
+  { name: 'teal-600', hex: '#4A5C8F' },
+  { name: 'teal-700', hex: '#354878' },
+  { name: 'teal-800', hex: '#283A6A' },
+  { name: 'teal-900', hex: '#1B2B5E' },
+  { name: 'teal-950', hex: '#141F42' },
 ];
 
 const ColorBrand = () => {
@@ -52,8 +52,8 @@ const ColorBrand = () => {
       </div>
       <p className="text-muted-foreground text-xs">
         NOTE: Notice the gentle curve at the bottom of each color—this playful
-        shape is inspired by the signature smile in the Commuto logo, adding a
-        friendly touch to our palette and gives tribute to our Commuto Smiley.
+        shape is inspired by the signature smile in the WorkRide logo, adding a
+        friendly touch to our palette and gives tribute to our WorkRide Smiley.
       </p>
     </section>
   );

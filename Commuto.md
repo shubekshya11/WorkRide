@@ -1,4 +1,4 @@
-# Complete Commuto Workflow (Login to Karma Redemption)
+# Complete WorkRide Workflow (Login to Karma Redemption)
 
 ```mermaid
 flowchart TD

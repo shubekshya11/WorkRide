@@ -256,7 +256,7 @@ const RedeemPage = () => {
                       {/* <span className="font-bold">0</span> */}
                       <span className="font-bold">{item.points}</span>
                     </div>
-                    <div className="relative h-3 w-full rounded-full border border-dark/20 bg-white dark:border-dark dark:bg-gray-200">
+                    <div className="relative h-3 w-full rounded-full border border-dark/20 bg-teal-100 dark:border-dark dark:bg-gray-200">
                       <div
                         className={`absolute left-0 top-0 h-2.5 rounded-full bg-gradient-to-r ${item.progressBarColor} transition-all`}
                         style={{ width: `${percent}%` }}
@@ -267,7 +267,7 @@ const RedeemPage = () => {
                           left: percent <= 5 ? 0 : `calc(${percent}% - 1.5rem)`,
                         }}
                       >
-                        <span className="rounded-full border border-amber-300 bg-white px-2 py-0.5 text-xs font-bold text-amber-700 shadow-sm">
+                        <span className="rounded-full border border-amber-300 bg-teal-100 px-2 py-0.5 text-xs font-bold text-amber-700 shadow-sm">
                           {Math.floor(item.progress * item.points)}
                         </span>
                       </div>

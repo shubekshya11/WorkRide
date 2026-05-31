@@ -1,8 +1,6 @@
 import * as yup from 'yup';
-import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
-import ReCAPTCHA from 'react-google-recaptcha';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -23,7 +21,6 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
@@ -35,16 +32,7 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const handleRecaptchaChange = (token: string | null) => {
-    setRecaptchaToken(token);
-  };
-
   const onSubmit = async (data: LoginFormData) => {
-    if (!recaptchaToken) {
-      toast.error('Please complete the reCAPTCHA verification.');
-      return;
-    }
-
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}${API_AUTH_LOGIN}`,
@@ -56,7 +44,6 @@ const Login = () => {
           body: JSON.stringify({
             email: data.email,
             password: data.password,
-            recaptchaToken,
           }),
         },
       );
@@ -116,7 +103,7 @@ const Login = () => {
       <main>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mx-auto max-w-lg rounded-xl bg-white p-3 dark:bg-dark"
+          className="mx-auto max-w-lg rounded-xl border border-teal-200 bg-teal-100 p-3 shadow-sm"
         >
           {formInputs.map((input) => (
             <div key={input.name} className="relative mb-4">
@@ -143,20 +130,7 @@ const Login = () => {
             </div>
           ))}
 
-          <div className="my-6">
-            {import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
-              <ReCAPTCHA
-                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                onChange={handleRecaptchaChange}
-              />
-            ) : (
-              <div className="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
-                Warning: VITE_RECAPTCHA_SITE_KEY is not configured. Please set it in your .env file.
-              </div>
-            )}
-          </div>
-
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 mt-6 flex items-center justify-between">
             <label
               htmlFor="remember"
               className="select-none text-gray-700 dark:text-light"
@@ -179,7 +153,7 @@ const Login = () => {
 
           <button
             type="submit"
-            className={`w-full rounded-full bg-teal-300 px-4 py-3 uppercase text-dark ${
+            className={`w-full rounded-full bg-teal-300 px-4 py-3 uppercase text-teal-100 ${
               isSubmitting ? 'cursor-not-allowed opacity-75' : ''
             }`}
             disabled={isSubmitting}

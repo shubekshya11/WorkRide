@@ -126,7 +126,7 @@ const ViewScore = () => {
       <main>
         <CtoUI
           title="Improve Your Credit Score Today!"
-          description="Start joining rides and building your reputation on Commuto. The more reliable and trustworthy you are, the better your credit score will be. Take the first step towards becoming a preferred passenger now!"
+          description="Start joining rides and building your reputation on WorkRide. The more reliable and trustworthy you are, the better your credit score will be. Take the first step towards becoming a preferred passenger now!"
         />
       </main>
     </>

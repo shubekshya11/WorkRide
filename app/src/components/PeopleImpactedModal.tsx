@@ -13,7 +13,7 @@ const PeopleImpactedModal = ({ onClose, people }: PeopleImpactedModalProps) => {
   return (
     <>
       <Modal onClose={onClose} className="w-full">
-        <div className="mx-auto w-full max-w-md overflow-hidden border border-teal-300 bg-white shadow dark:border-teal-300/70 dark:bg-dark">
+        <div className="mx-auto w-full max-w-md overflow-hidden border border-teal-300 bg-teal-100 shadow dark:border-teal-300/70 dark:bg-dark">
           <h3
             id="people-impacted-modal-title"
             className="border-b border-teal-300/50 bg-teal-100 p-5 text-lg font-medium text-dark dark:bg-teal-950 dark:text-teal-300 md:text-lg"
@@ -31,7 +31,7 @@ const PeopleImpactedModal = ({ onClose, people }: PeopleImpactedModalProps) => {
                   <img
                     src={person.img || DEFAULT_AVATAR_URL}
                     alt={person.name}
-                    className="size-12 rounded-full border-2 border-teal-200 bg-white object-cover dark:border-teal-600 dark:bg-dark"
+                    className="size-12 rounded-full border-2 border-teal-200 bg-teal-100 object-cover dark:border-teal-600 dark:bg-dark"
                   />
                   {index < MAX_VISIBLE_SLOTS && (
                     <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-teal-500 text-xs font-medium text-white">

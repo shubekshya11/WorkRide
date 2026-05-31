@@ -27,7 +27,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     <AnimatePresence>
       {open && (
         <Modal onClose={onCancel}>
-          <div className="mx-auto w-full max-w-lg border border-dark/20 bg-white p-10 shadow dark:border-light/20 dark:bg-dark">
+          <div className="mx-auto w-full max-w-lg border border-dark/20 bg-teal-100 p-10 shadow dark:border-light/20 dark:bg-dark">
             {title && <h2 className="mb-4 text-xl font-semibold">{title}</h2>}
             {description && <p className="text-sm opacity-80">{description}</p>}
 

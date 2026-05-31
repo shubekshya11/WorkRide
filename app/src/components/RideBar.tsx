@@ -28,7 +28,6 @@ import { getUserId, getUserData } from '../utils/auth';
 import { RideFormData, RideBarProps, UserDetails } from '../interfaces/types';
 
 import AgreeInfo from './ui/AgreeInfo';
-import NoRideFound from './ui/NoRideFound';
 import SearchingRide from './ui/SearchingRide';
 import FullScreenModal from './ui/FullScreenModal';
 import CurrentRideStatus from './ui/CurrentRideStatus';
@@ -178,7 +177,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
     if (availableRides.length > 0) {
       setShowModal(true);
     } else {
-      setShowModal(true);
+      setShowRideStatusModal(true);
     }
   };
 
@@ -263,7 +262,11 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
         }
 
         setIsLoading(false);
-        setShowModal(true);
+        if (availableRides.length > 0) {
+          setShowModal(true);
+        } else {
+          setShowRideStatusModal(true);
+        }
         reset({
           from: '',
           to: '',
@@ -628,22 +631,28 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
     };
   };
 
-  // ISSUE #50: persist last search params in localStorage
+  // Restore last search params; only refetch matches when logged in (avoids auth redirect on home)
   useEffect(() => {
     const savedParams = localStorage.getItem('lastSearchParams');
-    if (savedParams) {
-      const parsed = JSON.parse(savedParams);
-      setLastSearchParams(parsed);
+    if (!savedParams) return;
 
-      if (parsed.role && parsed.fromLat && parsed.fromLng && parsed.timestamp) {
-        fetchAvailableRides(
-          parsed.role,
-          parsed.fromLat,
-          parsed.fromLng,
-          parsed.timestamp,
-          false,
-        ).then((rides) => setRidesFound(rides));
-      }
+    const parsed = JSON.parse(savedParams);
+    setLastSearchParams(parsed);
+
+    if (
+      getUserId() &&
+      parsed.role &&
+      parsed.fromLat &&
+      parsed.fromLng &&
+      parsed.timestamp
+    ) {
+      fetchAvailableRides(
+        parsed.role,
+        parsed.fromLat,
+        parsed.fromLng,
+        parsed.timestamp,
+        false,
+      ).then((rides) => setRidesFound(rides));
     }
   }, []);
 
@@ -659,7 +668,14 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
   if (isLoading) {
     return (
       <FullScreenModal onClose={() => setIsLoading(false)}>
-        <SearchingRide />
+        <SearchingRide
+          heading={
+            role === USER_ROLE.RIDER
+              ? 'Searching for passengers'
+              : 'Searching for riders'
+          }
+          message="Please wait while we submit your ride and search for matches."
+        />
       </FullScreenModal>
     );
   }
@@ -677,7 +693,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
       >
         <form
           onSubmit={handleSubmit(onSubmit, onError)}
-          className="flex flex-col items-center justify-between gap-2 rounded-3xl border bg-white p-2 shadow dark:border-teal-300 dark:bg-teal-600 lg:flex-row lg:rounded-full"
+          className="flex flex-col items-center justify-between gap-2 rounded-3xl border bg-teal-100 p-2 shadow dark:border-teal-300 dark:bg-teal-600 lg:flex-row lg:rounded-full"
           aria-labelledby="ride-form-title"
         >
           {findRideFormFields.map(
@@ -800,9 +816,18 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
               handleReject={handleReject}
             />
           ) : (
-            <>
-              <NoRideFound />
-            </>
+            <SearchingRide
+              heading={
+                role === USER_ROLE.RIDER
+                  ? 'Searching for passengers'
+                  : 'Searching for riders'
+              }
+              message={
+                role === USER_ROLE.RIDER
+                  ? 'Your ride is posted. We are looking for passengers sharing the same route. Check back soon or use Search Again.'
+                  : 'Your request is posted. We are looking for riders sharing the same route. Check back soon or use Search Again.'
+              }
+            />
           )}
         </FullScreenModal>
       )}

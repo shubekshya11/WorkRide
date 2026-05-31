@@ -9,8 +9,8 @@ import { RideHistory, ReflectionStats } from '../interfaces/types';
 
 import { apiFetch } from '../utils/api';
 import { getStoredUser } from '../utils/functions';
-import { useKarmaPoints } from '../hooks/useKarmaPoints';
-import { useCreditScore } from '../hooks/useCreditScore';
+// import { useKarmaPoints } from '../hooks/useKarmaPoints';
+// import { useCreditScore } from '../hooks/useCreditScore';
 
 import Dashboard from '../components/Dashboard';
 import ReflectionDashboard from '../components/ReflectionDashboard';
@@ -26,8 +26,8 @@ const SelfReflection = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [userRole, setUserRole] = useState<USER_ROLE>(USER_ROLE.RIDER);
 
-  const { karmaPoints } = useKarmaPoints();
-  const { creditScore } = useCreditScore();
+  // const { karmaPoints } = useKarmaPoints();
+  // const { creditScore } = useCreditScore();
   const navigate = useNavigate();
 
   // TODO: Refactor ride history fetching to support pagination and infinite scroll
@@ -101,24 +101,26 @@ const SelfReflection = () => {
   const stats: ReflectionStats = {
     postedCount: getTotalRideCountByRole(userRole, userId),
     confirmedCount: completedRides.length,
-    karmaPoints: karmaPoints ?? 0,
-    creditScore: creditScore ?? 0,
+    karmaPoints: 0,
+    creditScore: 0,
     distanceTravelled: completedRides.reduce(
       (sum, ride) => sum + (ride.distance ?? 0),
       0,
     ),
-    co2Reduced: completedRides.reduce(
-      (sum, ride) => sum + (ride.co2Saved ?? 0),
-      0,
-    ),
+    co2Reduced: 0,
+    // co2Reduced: completedRides.reduce(
+    //   (sum, ride) => sum + (ride.co2Saved ?? 0),
+    //   0,
+    // ),
     peopleImpacted: completedRides.length,
   };
 
   return (
     <>
-      <main className="overflow-hidden p-2 md:p-4 xl:p-8">
-        <div className="absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-teal-300 opacity-40 blur-[100px]" />
-        <div className="absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-teal-300 opacity-80 blur-[200px]" />
+      <main className="mx-auto max-w-4xl overflow-hidden p-4 md:p-6">
+        <h1 className="mb-6 text-2xl font-semibold text-teal-950 dark:text-teal-100">
+          Your activity
+        </h1>
 
         <ReflectionDashboard
           stats={stats}

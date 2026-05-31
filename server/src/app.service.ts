@@ -11,6 +11,6 @@ export class AppService {
 
   getHello(): string {
     this.logger.log('AppService.getHello called', AppService.name);
-    return 'Welcome to Commuto!';
+    return 'Welcome to WorkRide!';
   }
 }

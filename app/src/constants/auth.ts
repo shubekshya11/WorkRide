@@ -6,9 +6,9 @@
  */
 
 // LocalStorage Keys
-export const ACCESS_TOKEN_KEY = 'commuto_access_token';
-export const REFRESH_TOKEN_KEY = 'commuto_refresh_token';
-export const USER_DATA_KEY = 'commuto_user_data';
+export const ACCESS_TOKEN_KEY = 'workride_access_token';
+export const REFRESH_TOKEN_KEY = 'workride_refresh_token';
+export const USER_DATA_KEY = 'workride_user_data';
 
 // Token Configuration
 export const TOKEN_EXPIRY_BUFFER_SECONDS = 30; // Refresh token 30 seconds before expiration

@@ -6,19 +6,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark: '#001312',
-        light: '#f5f5f5',
-        // 'teal-50': '#f0fdfa',
-        // 'teal-100': '#ccfbf1',
-        // 'teal-200': '#99f6e4',
-        // 'teal-300': '#5eead4',
-        // 'teal-400': '#2dd4bf',
-        // 'teal-500': '#14b8a6',
-        // 'teal-600': '#0d9488',
-        // 'teal-700': '#0f766e',
-        // 'teal-800': '#115e59',
-        // 'teal-900': '#134e4a',
-        // 'teal-950': '#042f2e',
+        // Brand palette
+        primary: '#1B2B5E', // navy — headers, nav, CTAs
+        surface: '#F5F0E8', // beige — backgrounds, cards
+        accent: '#C4B5D9', // light purple — badges, highlights
+        dark: '#1B2B5E',
+        light: '#F5F0E8',
+        // Remap teal utilities to brand colors (used throughout the app)
+        teal: {
+          50: '#FAF7F2',
+          100: '#F5F0E8', // surface / beige
+          200: '#C4B5D9', // accent / purple
+          300: '#1B2B5E', // primary / navy (CTAs)
+          400: '#A899C4',
+          500: '#6B7BA8',
+          600: '#4A5C8F',
+          700: '#354878',
+          800: '#283A6A',
+          900: '#1B2B5E', // navy
+          950: '#141F42',
+        },
       },
       fontSize: {
         xxs: '0.625rem', // 10px

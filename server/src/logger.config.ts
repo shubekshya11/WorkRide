@@ -45,7 +45,7 @@ const esTransportOpts = {
   clientOpts: {
     node: process.env.ELASTICSEARCH_NODE || 'http://localhost:9200',
   },
-  indexPrefix: 'commuto-logs',
+  indexPrefix: 'workride-logs',
 };
 const esTransport = new ElasticsearchTransport(esTransportOpts);
 
@@ -86,7 +86,7 @@ export const winstonLoggerConfig = {
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.timestamp(),
-        nestWinstonModuleUtilities.format.nestLike('Commuto', {
+        nestWinstonModuleUtilities.format.nestLike('WorkRide', {
           prettyPrint: true,
         }),
       ),

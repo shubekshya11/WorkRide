@@ -4,7 +4,7 @@ import { navLinks } from '../constants/data';
 const StickyNavbar = () => {
   return (
     <>
-      <div className="fixed bottom-0 z-10 w-full overflow-hidden border bg-white shadow-lg dark:border-light/30 dark:bg-dark">
+      <div className="fixed bottom-0 z-10 w-full overflow-hidden border bg-teal-100 shadow-lg dark:border-light/30 dark:bg-dark">
         <div className="flex items-center justify-center px-6 xl:justify-between">
           <div className="hidden xl:block">
             <p className="dark:opacity-70">Let's Get You Back on the Track!</p>

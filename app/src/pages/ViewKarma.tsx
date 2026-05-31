@@ -112,7 +112,7 @@ const ViewKarma = () => {
                           key={tier.tier}
                           className={
                             idx % 2 === 0
-                              ? 'bg-white dark:bg-teal-950'
+                              ? 'bg-teal-100 dark:bg-teal-950'
                               : 'bg-teal-50 dark:bg-teal-900'
                           }
                         >
@@ -148,7 +148,7 @@ const ViewKarma = () => {
                           key={bonus.description}
                           className={
                             idx % 2 === 0
-                              ? 'bg-white dark:bg-teal-950'
+                              ? 'bg-teal-100 dark:bg-teal-950'
                               : 'bg-teal-50 dark:bg-teal-900'
                           }
                         >

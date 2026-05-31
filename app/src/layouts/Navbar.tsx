@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { TbMenu2, TbPlus, TbSearch } from 'react-icons/tb';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import logo from '../assets/logo/commuto.svg';
-import logoAlt from '../assets/logo/commuto-alt.svg';
+// import logo from '../assets/logo/workride.svg';
+// import logoAlt from '../assets/logo/workride-alt.svg';
 
 import { RIDE_STATUS } from '../constants/enums';
 import { ROUTE_HOME, ROUTE_LOGIN, ROUTE_PROFILE } from '../constants/routes';
@@ -12,10 +12,7 @@ import { useSocket } from '../utils/useSocket';
 import { useRideEvent } from '../utils/useRideEvent';
 
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../contexts/ThemeProvider';
-
 import SideNav from './SideNav';
-import ThemeToggle from '../components/ui/ThemeToggle';
 import { getFirstNameFromFullName } from '../utils/functions';
 
 const navLinks = [
@@ -67,7 +64,6 @@ const Navbar = () => {
 
   const [visible, setVisible] = useState(true);
   const location = useLocation();
-  const { theme } = useTheme();
   const { user } = useAuth();
 
   const userName = user?.fullname
@@ -141,19 +137,15 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className={`sticky top-0 z-40 w-full duration-[1s] ${window.scrollY > 0 ? 'bg-white py-3 dark:bg-dark md:py-3' : 'p-3 md:p-6'} ${visible ? '' : '-translate-y-full'}`}
+        className={`sticky top-0 z-40 w-full duration-[1s] ${window.scrollY > 0 ? 'bg-teal-100/95 py-3 backdrop-blur-sm md:py-3' : 'p-3 md:p-6'} ${visible ? '' : '-translate-y-full'}`}
         style={{ transitionProperty: 'transform, padding' }}
       >
         <div className={`flex items-center justify-between md:items-start`}>
           <Link
             to={ROUTE_HOME}
-            className="inline-flex items-center gap-2.5 text-lg font-semibold text-teal-950 dark:text-teal-300 sm:text-3xl"
+            className="inline-flex items-center gap-2.5 text-lg font-semibold text-teal-950 sm:text-3xl"
           >
-            <img
-              src={theme === 'dark' ? logo : logoAlt}
-              alt="Logo"
-              className="h-6 object-contain sm:h-9"
-            />
+            WorkRide
           </Link>
 
           <div className="flex items-center justify-end gap-8">
@@ -176,9 +168,9 @@ const Navbar = () => {
                   type="button"
                   onClick={handleClick}
                   aria-label="Active Ride"
-                  className="flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 sm:px-4 sm:py-2 sm:text-base"
+                  className="flex items-center gap-1.5 rounded-full bg-teal-200 px-3 py-1 text-sm font-medium text-teal-950 sm:px-4 sm:py-2 sm:text-base"
                 >
-                  <span className="size-2.5 animate-pulse rounded-full bg-green-600" />
+                  <span className="size-2.5 animate-pulse rounded-full bg-teal-700" />
                   Active
                 </button>
               )}
@@ -196,7 +188,7 @@ const Navbar = () => {
               {userName ? (
                 <Link
                   to={ROUTE_PROFILE}
-                  className="hidden items-center justify-center gap-2 rounded-full bg-teal-100 py-2 pl-4 pr-5 font-semibold text-teal-600 md:flex"
+                  className="hidden items-center justify-center gap-2 rounded-full bg-teal-200 py-2 pl-4 pr-5 font-semibold text-teal-950 md:flex"
                 >
                   <span className="animate-wave">&#128075;</span>
                   Hi, {userName}!
@@ -204,7 +196,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to={ROUTE_LOGIN}
-                  className="hidden rounded-full bg-teal-300 px-6 py-2 font-semibold dark:text-dark md:flex"
+                  className="hidden rounded-full bg-teal-300 px-6 py-2 font-semibold text-teal-100 md:flex"
                 >
                   Login
                 </Link>
@@ -217,8 +209,6 @@ const Navbar = () => {
                 >
                   <TbMenu2 className="scale-150 text-base" />
                 </button>
-
-                <ThemeToggle />
               </div>
             </div>
           </div>

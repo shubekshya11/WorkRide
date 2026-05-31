@@ -11,12 +11,9 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import axios from 'axios';
 import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
-import { EnvService } from './env.service';
 import { PrismaService } from './prisma.service';
 import { AuthService } from './services/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -53,8 +50,6 @@ export class AuthController {
   constructor(
     private prisma: PrismaService,
     private authService: AuthService,
-    private configService: ConfigService,
-    private envService: EnvService,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -67,58 +62,6 @@ export class AuthController {
       tag: 'auth',
       email: body.email,
     });
-
-    if (!this.envService.isDev) {
-      const recaptchaSecret = this.configService.get<string>(
-        'RECAPTCHA_SECRET_KEY',
-      );
-
-      if (!body.recaptchaToken) {
-        this.logger.log({
-          level: 'warn',
-          message: `Login failed for email: ${body.email} - Missing reCAPTCHA token`,
-          tag: 'auth',
-          email: body.email,
-        });
-
-        throw new BadRequestException('Missing reCAPTCHA token');
-      }
-      const verifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
-      let response: any;
-      try {
-        response = await axios.post(
-          verifyUrl,
-          new URLSearchParams({
-            secret: recaptchaSecret || '',
-            response: body.recaptchaToken,
-          }),
-        );
-      } catch {
-        this.logger.log({
-          level: 'error',
-          message: `Login failed for email: ${body.email} - reCAPTCHA verification request failed`,
-          tag: 'error',
-          email: body.email,
-        });
-        throw new UnauthorizedException('Failed to verify reCAPTCHA');
-      }
-      // Safely extract response.data
-      let data: Record<string, any> | undefined = undefined;
-      if (response && typeof response === 'object' && 'data' in response) {
-        data = (response as { data: Record<string, any> }).data;
-      }
-      if (!data || !data.success) {
-        this.logger.log({
-          level: 'error',
-          message: `Login failed for email: ${body.email} - reCAPTCHA verification failed: ${JSON.stringify(
-            data,
-          )}`,
-          tag: 'error',
-          email: body.email,
-        });
-        throw new UnauthorizedException('reCAPTCHA verification failed');
-      }
-    }
 
     const user = await this.prisma.user.findUnique({
       where: { email: body.email },

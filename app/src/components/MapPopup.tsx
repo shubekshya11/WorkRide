@@ -227,7 +227,7 @@ const MapPopup: React.FC<MapPopupProps> = ({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="relative h-screen w-full overflow-y-hidden bg-white">
+        <div className="relative h-screen w-full overflow-y-hidden bg-teal-100">
           <button
             type="button"
             onClick={onClose}
@@ -244,7 +244,7 @@ const MapPopup: React.FC<MapPopupProps> = ({
           {suggestions.length > 0 && (
             <div
               ref={suggestionsRef}
-              className="scroll max-h-72 w-full overflow-y-auto rounded-3xl border border-dark/30 bg-white shadow-lg backdrop-blur-sm dark:bg-dark/80"
+              className="scroll max-h-72 w-full overflow-y-auto rounded-3xl border border-dark/30 bg-teal-100 shadow-lg backdrop-blur-sm dark:bg-dark/80"
             >
               <button
                 type="button"
@@ -266,7 +266,7 @@ const MapPopup: React.FC<MapPopupProps> = ({
               </ul>
             </div>
           )}
-          <div className="flex items-center gap-1 rounded-full border border-dark/30 bg-white p-1.5 dark:bg-dark">
+          <div className="flex items-center gap-1 rounded-full border border-dark/30 bg-teal-100 p-1.5 dark:bg-dark">
             <input
               type="text"
               value={address || searchQuery}

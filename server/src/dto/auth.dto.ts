@@ -15,9 +15,6 @@ export class LoginDto {
 
   @IsString()
   password: string;
-
-  @IsString()
-  recaptchaToken: string;
 }
 
 export class SignupDto {

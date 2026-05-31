@@ -42,7 +42,7 @@ const RoleBasedPage = () => {
                 {role.rules.map((rule, index) => (
                   <li
                     key={index}
-                    className="relative overflow-hidden text-pretty rounded-2xl border bg-white p-6 text-base font-light leading-relaxed shadow-sm backdrop-blur dark:border-teal-300/50 dark:bg-teal-900 sm:text-sm md:p-8 lg:text-base"
+                    className="relative overflow-hidden text-pretty rounded-2xl border bg-teal-100 p-6 text-base font-light leading-relaxed shadow-sm backdrop-blur dark:border-teal-300/50 dark:bg-teal-900 sm:text-sm md:p-8 lg:text-base"
                   >
                     <div className="pointer-events-none absolute -bottom-1/2 -left-[20%] -z-10 size-32 rounded-full bg-teal-400 blur-[50px]" />
                     <div className="pointer-events-none absolute -right-10 -top-12 -z-10 size-24 rounded-full bg-teal-300 blur-[50px]" />

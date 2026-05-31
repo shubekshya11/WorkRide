@@ -81,7 +81,7 @@ const AboutPage: React.FC = () => {
         </span>
 
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-0 xl:flex-row xl:gap-12">
-          <div className="sticky top-0 max-h-fit w-full rounded-full bg-white p-4 dark:bg-dark xl:max-w-xs xl:rounded-none xl:pt-20">
+          <div className="sticky top-0 max-h-fit w-full rounded-full bg-teal-100 p-4 dark:bg-dark xl:max-w-xs xl:rounded-none xl:pt-20">
             <ul className="flex w-full items-center justify-around xl:flex-col xl:items-start xl:gap-12">
               {aboutNavLinks.map((navLink, index) => (
                 <li key={navLink.id}>

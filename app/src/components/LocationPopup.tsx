@@ -75,7 +75,7 @@ const LocationPopup: React.FC<LocationPopupProps> = ({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="relative flex size-full items-center justify-center space-y-4 bg-white p-4 dark:bg-dark md:p-6">
+        <div className="relative flex size-full items-center justify-center space-y-4 bg-teal-100 p-4 dark:bg-dark md:p-6">
           <button
             type="button"
             onClick={onClose}
@@ -99,7 +99,7 @@ const LocationPopup: React.FC<LocationPopupProps> = ({
                 id="searchLocation"
               />
               <label htmlFor="searchLocation">
-                <TbSearch className="pointer-events-none absolute right-3 top-3 bg-white text-2xl text-dark/40 dark:bg-dark dark:text-teal-300" />
+                <TbSearch className="pointer-events-none absolute right-3 top-3 bg-teal-100 text-2xl text-dark/40 dark:bg-dark dark:text-teal-300" />
               </label>
 
               <p className="mt-2 text-xs">

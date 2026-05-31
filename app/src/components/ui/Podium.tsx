@@ -47,12 +47,7 @@ const Podium = ({
                         : 'border-amber-600 bg-amber-700'
                   }`}
                 >
-                  {/* {user.name.charAt(0)} */}
-                  <img
-                    src={user.profilePicture}
-                    alt={user.name}
-                    className="aspect-square size-16 rounded-full object-cover"
-                  />
+                  {user.name.charAt(0)}
                 </div>
 
                 <div className="mb-3 flex flex-col items-center gap-1">
@@ -65,7 +60,7 @@ const Podium = ({
                       </h3>
                     </Tooltip>
                   </div>
-                  <p className="rounded-full bg-white/50 px-2 py-0.5 text-xs font-normal backdrop-blur dark:bg-dark/50">
+                  <p className="rounded-full bg-teal-100/50 px-2 py-0.5 text-xs font-normal backdrop-blur dark:bg-dark/50">
                     {user.value} {getValueSuffix()}
                   </p>
                 </div>

@@ -81,8 +81,8 @@ const FontBrand = () => {
     <section id="font" className="space-y-10 py-10 md:space-y-16 md:py-20">
       <div>
         <p className="text-sm">
-          The typography used in Commuto is a blend of historical sources,
-          technical decisions, and personal feelings. Commuto uses{' '}
+          The typography used in WorkRide is a blend of historical sources,
+          technical decisions, and personal feelings. WorkRide uses{' '}
           <a
             href="https://ateliertriay.github.io/bricolage/"
             target="_blank"
@@ -140,7 +140,7 @@ const FontBrand = () => {
               <span
                 className={`${className} origin-left scale-[0.8] md:scale-100`}
               >
-                Commuto
+                WorkRide
               </span>
               <div className="text-xxs space-x-2">
                 <span>
@@ -156,7 +156,7 @@ const FontBrand = () => {
       <p className="text-muted-foreground text-xs">
         NOTE: <span className="font-medium">{fontName}</span> is our one and
         only font. Every headline, every detail, every word: unified by this
-        singular, spirited typeface, ensuring Commuto's voice is always
+        singular, spirited typeface, ensuring WorkRide's voice is always
         unmistakably its own.
       </p>
     </section>

@@ -29,7 +29,7 @@ export const highlightMatch = (text: string, query: string) => {
   return text.replace(
     regex,
     (match) =>
-      `<span class="bg-teal-100 dark:bg-teal-600 font-medium">${match}</span>`,
+      `<span class="bg-teal-200 font-medium">${match}</span>`,
   );
 };
 
@@ -343,7 +343,7 @@ export const generateRewardAbbreviation = (rewardName: string): string => {
  * @returns The capitalized string
  *
  * @example
- * capitalize('COMMUTO') // returns 'Commuto'
+ * capitalize('WORKRIDE') // returns 'Workride'
  */
 export const capitalize = (str: string): string => {
   if (!str) return str;

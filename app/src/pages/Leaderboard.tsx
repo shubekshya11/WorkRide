@@ -208,7 +208,7 @@ const Leaderboard: React.FC = () => {
             Community Champions
           </span>
           <h1 className="mt-4 text-2xl font-bold capitalize leading-snug text-teal-500 md:text-4xl md:leading-snug lg:text-5xl lg:leading-snug">
-            Commuto Leaderboard
+            WorkRide Leaderboard
           </h1>
           <p className="max-w-2xl font-body text-xs sm:text-sm md:text-sm">
             Discover our top-performing riders who are making a difference in
@@ -218,7 +218,7 @@ const Leaderboard: React.FC = () => {
         </div>
 
         {/* // TODO: on click of the button, scroll to top section of the header */}
-        <header className="sticky top-2 z-50 mx-auto flex w-fit items-center justify-center gap-1.5 rounded-full border bg-white px-1.5 py-2 dark:border-teal-300/20 dark:bg-teal-300/20 md:p-2">
+        <header className="sticky top-2 z-50 mx-auto flex w-fit items-center justify-center gap-1.5 rounded-full border bg-teal-100 px-1.5 py-2 dark:border-teal-300/20 dark:bg-teal-300/20 md:p-2">
           <button
             onClick={() => setActiveTab('rides')}
             className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-dark dark:hover:bg-teal-800 ${
@@ -265,7 +265,7 @@ const Leaderboard: React.FC = () => {
             </h2> */}
             <p className="mx-auto max-w-md text-xs">
               {activeTab === 'rides' &&
-                'Most active riders who have completed the highest number of rides on Commuto and contributed to sustainable transportation.'}
+                'Most active riders who have completed the highest number of rides on WorkRide and contributed to sustainable transportation.'}
               {activeTab === 'karma' &&
                 'Riders with the highest Karma Points earned through positive behavior, reliability, and community engagement.'}
               {activeTab === 'feedback' &&
@@ -287,7 +287,7 @@ const Leaderboard: React.FC = () => {
               {activeTab === 'feedback' && 'Feedback Score'} Leaderboard
             </h3>
 
-            <div className="overflow-x-auto rounded-t-3xl border border-teal-300/60 bg-white shadow-lg dark:bg-dark">
+            <div className="overflow-x-auto rounded-t-3xl border border-teal-300/60 bg-teal-100 shadow-lg dark:bg-dark">
               <table className="w-full text-xs xl:text-sm">
                 <thead className="bg-teal-100 dark:bg-teal-900">
                   <tr>
@@ -336,7 +336,7 @@ const Leaderboard: React.FC = () => {
                             email: `${user.name.replace(/\s+/g, '.').toLowerCase()}@example.com`,
                             fullname: user.name,
                           }}
-                          showProfilePicture={true}
+                          showProfilePicture={false}
                           className="max-w-40 text-xs"
                         />
                       </td>
@@ -370,7 +370,7 @@ const Leaderboard: React.FC = () => {
       <div className="my-32">
         <CtoUI
           title="Want to join the leaderboard?"
-          description="Join the Commuto community today and start making an impact! By sharing rides, you get listed on our leaderboard, earn karma points, and contribute to a greener planet and a better world."
+          description="Join the WorkRide community today and start making an impact! By sharing rides, you get listed on our leaderboard, earn karma points, and contribute to a greener planet and a better world."
         />
       </div>
     </>

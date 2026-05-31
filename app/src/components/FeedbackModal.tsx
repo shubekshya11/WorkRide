@@ -277,7 +277,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   return (
     <Modal onClose={onClose}>
-      <div className="relative w-full max-w-lg overflow-hidden border border-teal-300 bg-white p-6 shadow-xl dark:border-teal-300/50 dark:bg-dark md:p-8">
+      <div className="relative w-full max-w-lg overflow-hidden border border-teal-300 bg-teal-100 p-6 shadow-xl dark:border-teal-300/50 dark:bg-dark md:p-8">
         <div className="top-1/5 pointer-events-none absolute -right-[20%] z-auto size-48 rounded-full bg-teal-300 blur-[80px]" />
         <div className="pointer-events-none absolute -bottom-0 -left-20 z-auto size-52 rounded-full bg-teal-300 blur-[50px] dark:opacity-70" />
 
@@ -303,7 +303,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                       className={`group relative z-auto flex w-full flex-col items-center gap-2 overflow-hidden rounded-xl border p-4 transition-all duration-150 hover:shadow-lg focus:outline-none focus:ring-1 focus:ring-teal-400 ${
                         isSelected
                           ? 'border-teal-300 bg-teal-200 dark:bg-teal-300'
-                          : 'border-teal-300/50 bg-white ring-teal-300 hover:border-teal-300 hover:bg-teal-100/50 hover:ring-1 dark:bg-teal-950 dark:hover:bg-teal-300/30'
+                          : 'border-teal-300/50 bg-teal-100 ring-teal-300 hover:border-teal-300 hover:bg-teal-100/50 hover:ring-1 dark:bg-teal-950 dark:hover:bg-teal-300/30'
                       }`}
                       aria-label={`Rate ${option.label}`}
                     >

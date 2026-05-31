@@ -334,7 +334,7 @@ const LogsDashboard: React.FC = () => {
           className={`rounded-full border px-4 py-1 font-semibold transition-colors ${
             filter === 'today'
               ? 'border-blue-500 bg-blue-500 text-white'
-              : 'border-blue-500 bg-white text-blue-500 hover:bg-blue-50'
+              : 'border-blue-500 bg-teal-100 text-blue-500 hover:bg-blue-50'
           }`}
           onClick={() => setFilter('today')}
         >
@@ -344,7 +344,7 @@ const LogsDashboard: React.FC = () => {
           className={`rounded-full border px-4 py-1 font-semibold transition-colors ${
             filter === 'all'
               ? 'border-green-500 bg-green-500 text-white'
-              : 'border-green-500 bg-white text-green-500 hover:bg-green-50'
+              : 'border-green-500 bg-teal-100 text-green-500 hover:bg-green-50'
           }`}
           onClick={() => setFilter('all')}
         >
@@ -528,7 +528,7 @@ const LogsDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="max-h-[75vh] overflow-y-auto rounded border border-gray-200 bg-white shadow">
+            <div className="max-h-[75vh] overflow-y-auto rounded border border-gray-200 bg-teal-100 shadow">
               <table className="min-w-full text-sm">
                 <thead className="sticky top-0 z-10 bg-gray-50">
                   <tr>

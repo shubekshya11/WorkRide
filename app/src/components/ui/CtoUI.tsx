@@ -30,7 +30,7 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
         to={ROUTE_LOGIN}
         className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-100 via-teal-300 to-teal-200 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
       >
-        Join Commuto!
+        Join WorkRide!
       </Link>
     );
   } else {

@@ -1,7 +1,7 @@
 /**
  * Authentication & Token Management Utility
  *
- * Handles JWT token storage, retrieval, and validation for the Commuto app.
+ * Handles JWT token storage, retrieval, and validation for the WorkRide app.
  * Provides secure token management with automatic expiration checking.
  */
 

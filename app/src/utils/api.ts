@@ -75,8 +75,6 @@ async function refreshAccessToken(): Promise<string | null> {
 
       clearAuthData();
 
-      window.location.href = ROUTE_LOGIN;
-
       return null;
     } finally {
       refreshPromise = null;
@@ -86,24 +84,34 @@ async function refreshAccessToken(): Promise<string | null> {
   return refreshPromise;
 }
 
+function hasStoredAuth(): boolean {
+  return !!(getAccessToken() || getRefreshToken());
+}
+
+function redirectToLogin(onAuthFailure?: () => void): void {
+  if (onAuthFailure) {
+    onAuthFailure();
+  } else {
+    window.location.href = ROUTE_LOGIN;
+  }
+}
+
 /**
- * Enhanced fetch wrapper with JWT authentication and automatic token refresh
+ * Enhanced fetch wrapper with JWT authentication and automatic token refresh.
+ * Public pages stay public: no redirect unless the user had stored credentials.
  */
 export async function apiFetch<T>(
   url: string,
   options?: RequestInit,
   onAuthFailure?: () => void,
 ): Promise<T> {
-  if (isAccessTokenExpired()) {
+  const hadAuth = hasStoredAuth();
+
+  if (hadAuth && isAccessTokenExpired()) {
     const newToken = await refreshAccessToken();
 
     if (!newToken) {
-      if (onAuthFailure) {
-        onAuthFailure();
-      } else {
-        window.location.href = ROUTE_LOGIN;
-      }
-
+      redirectToLogin(onAuthFailure);
       throw new Error('Authentication expired. Please login again.');
     }
   }
@@ -121,6 +129,13 @@ export async function apiFetch<T>(
 
   // Handle 401 Unauthorized - token might be invalid
   if (response.status === 401) {
+    if (!hadAuth) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(
+        (error as { message?: string }).message || 'Authentication required',
+      );
+    }
+
     const newToken = await refreshAccessToken();
 
     if (newToken) {
@@ -142,13 +157,7 @@ export async function apiFetch<T>(
     }
 
     clearAuthData();
-
-    if (onAuthFailure) {
-      onAuthFailure();
-    } else {
-      window.location.href = ROUTE_LOGIN;
-    }
-
+    redirectToLogin(onAuthFailure);
     throw new Error('Authentication required');
   }
 

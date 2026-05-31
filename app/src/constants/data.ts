@@ -796,19 +796,19 @@ export const faqContents = [
       'Yes, you can update your role anytime from your profile or while posting a ride.',
   },
   {
-    question: 'Why was Commuto developed?',
+    question: 'Why was WorkRide developed?',
     answer:
-      'Commuto was developed to make daily commutes easier and more efficient by connecting riders and passengers.',
+      'WorkRide was developed to make daily commutes easier and more efficient by connecting riders and passengers.',
   },
   {
-    question: 'What is the vision and mission of Commuto?',
+    question: 'What is the vision and mission of WorkRide?',
     answer:
       'Our Vision is to live in a world where we all share resources to better preserve our economy and planet. Our Mission is to fill the empty seats in our ride and make our commute more affordable and sustainable.',
   },
   {
-    question: 'Is Commuto profit-oriented?',
+    question: 'Is WorkRide profit-oriented?',
     answer:
-      "Commuto is non profit-oriented and aims to provide a free service to the community and help reduce carbon emissions. It doesn't generate any revenue from the platform.",
+      "WorkRide is non profit-oriented and aims to provide a free service to the community and help reduce carbon emissions. It doesn't generate any revenue from the platform.",
   },
 ];
 
@@ -824,16 +824,6 @@ export const footerLinks = [
     title: 'Terms & Policies',
     link: '/legal/policies',
   },
-  {
-    id: 'copyright',
-    title: 'Trademark & Copyright',
-    link: '/legal/copyright',
-  },
-  {
-    id: 'brand',
-    title: 'Brand Guidelines',
-    link: '/brand',
-  },
 ];
 
 export const policies = [
@@ -841,13 +831,13 @@ export const policies = [
     id: 'terms',
     title: 'Terms of Service',
     description:
-      'By using Commuto, you agree to abide by the following terms and conditions. These terms are designed to ensure a safe, respectful, and reliable experience for all users.',
+      'By using WorkRide, you agree to abide by the following terms and conditions. These terms are designed to ensure a safe, respectful, and reliable experience for all users.',
     list: [
       'Provide accurate and up-to-date information when creating your account and booking rides.',
       'Respect other users and adhere to community guidelines at all times.',
       'Do not misuse the platform for fraudulent, illegal, or harmful activities.',
       'Any misuse of the platform may result in account suspension or termination.',
-      'Commuto reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of any changes.',
+      'WorkRide reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of any changes.',
     ],
   },
   {
@@ -883,7 +873,7 @@ export const policies = [
     list: [
       'Treat others with respect, kindness, and consideration.',
       'Communicate clearly and promptly with your ride partners.',
-      'Report any inappropriate behavior or safety concerns to Commuto support.',
+      'Report any inappropriate behavior or safety concerns to WorkRide support.',
       'Help maintain a safe, inclusive, and welcoming environment for everyone.',
     ],
   },
@@ -904,7 +894,7 @@ export const policies = [
     id: 'contact',
     title: 'Contact & Support',
     description:
-      'If you have any questions, concerns, or need assistance regarding our policies or your experience on Commuto, please contact us.',
+      'If you have any questions, concerns, or need assistance regarding our policies or your experience on WorkRide, please contact us.',
     list: [],
   },
   {
@@ -919,13 +909,13 @@ export const policies = [
 export const copyrightSections = [
   {
     id: 'trademark',
-    title: 'Commuto Trademark',
+    title: 'WorkRide Trademark',
     description:
-      'The name Commuto, its logo, and all related brand assets are trademarks of Commuto. These trademarks are protected by applicable intellectual property laws and may not be used, reproduced, or distributed without explicit written permission from the Commuto team.',
+      'The name WorkRide, its logo, and all related brand assets are trademarks of WorkRide. These trademarks are protected by applicable intellectual property laws and may not be used, reproduced, or distributed without explicit written permission from the WorkRide team.',
     list: [
-      'Do not use the Commuto name or logo in a way that suggests endorsement or partnership without permission.',
-      'Do not modify, distort, or alter the Commuto logo or brand assets in any way.',
-      'Do not use Commuto trademarks as part of your own product, service, or company name.',
+      'Do not use the WorkRide name or logo in a way that suggests endorsement or partnership without permission.',
+      'Do not modify, distort, or alter the WorkRide logo or brand assets in any way.',
+      'Do not use WorkRide trademarks as part of your own product, service, or company name.',
     ],
   },
   {
@@ -934,9 +924,9 @@ export const copyrightSections = [
     description:
       '© ' +
       getCurrentYear() +
-      ' Commuto. All rights reserved. All content, including but not limited to text, graphics, logos, icons, images, and software, is the property of Commuto or its content suppliers and is protected by international copyright laws.',
+      ' WorkRide. All rights reserved. All content, including but not limited to text, graphics, logos, icons, images, and software, is the property of WorkRide or its content suppliers and is protected by international copyright laws.',
     list: [
-      'You may not copy, reproduce, republish, upload, post, transmit, or distribute any material from this website without prior written consent from Commuto.',
+      'You may not copy, reproduce, republish, upload, post, transmit, or distribute any material from this website without prior written consent from WorkRide.',
       'Content may be used for personal, non-commercial reference only, provided that all copyright and proprietary notices remain intact.',
       'Any unauthorized use of the content may violate copyright, trademark, and other laws.',
     ],
@@ -954,7 +944,7 @@ export const copyrightSections = [
     id: 'reporting',
     title: 'Reporting Violations',
     description:
-      'If you notice any misuse of Commuto trademarks or copyrighted materials, or have questions about proper use, please contact us at hello@commuto.app.',
+      'If you notice any misuse of WorkRide trademarks or copyrighted materials, or have questions about proper use, please contact us at hello@workride.app.',
     list: [],
   },
   {
@@ -971,14 +961,14 @@ export const legalPages = [
     id: 'policies',
     title: 'Terms, Policies & Legal',
     intro:
-      'This page outlines the key policies, terms, and legal information for using Commuto. Please read carefully to understand your rights, responsibilities, and our commitment to your privacy, safety, and a positive community experience.',
+      'This page outlines the key policies, terms, and legal information for using WorkRide. Please read carefully to understand your rights, responsibilities, and our commitment to your privacy, safety, and a positive community experience.',
     sections: policies,
   },
   {
     id: 'copyright',
     title: 'Trademark and Copyright Notice',
     intro:
-      "This page outlines the trademark and copyright policies for Commuto. Unauthorized use of our trademarks or copyrighted materials may result in legal action. Please read carefully to understand your rights and responsibilities regarding the use of Commuto's intellectual property.",
+      "This page outlines the trademark and copyright policies for WorkRide. Unauthorized use of our trademarks or copyrighted materials may result in legal action. Please read carefully to understand your rights and responsibilities regarding the use of WorkRide's intellectual property.",
     sections: copyrightSections,
   },
 ];

@@ -4,8 +4,8 @@ import Confetti from 'react-confetti';
 import { toast } from 'react-toastify';
 import { TbDownload } from 'react-icons/tb';
 
-import logo from '../../assets/logo/commuto.svg';
-import logoAlt from '../../assets/logo/commuto-alt.svg';
+import logo from '../../assets/logo/workride.svg';
+import logoAlt from '../../assets/logo/workride-alt.svg';
 
 import { RedeemableReward } from '../../interfaces/types';
 import {
@@ -98,7 +98,7 @@ const GiftCardVoucher: React.FC<GiftCardVoucherProps> = ({
           initialVelocityY={20}
           tweenDuration={5000}
         />
-        <div className="relative inline-block h-full bg-white text-dark shadow-lg dark:bg-amber-950">
+        <div className="relative inline-block h-full bg-teal-100 text-dark shadow-lg dark:bg-amber-950">
           <div className="mb-4 flex justify-between gap-2 border-b p-3 pb-4 shadow-sm sm:p-6 md:mb-6">
             <h2 className="inline-flex items-center gap-2.5">
               <img
@@ -207,7 +207,7 @@ const GiftCardVoucher: React.FC<GiftCardVoucherProps> = ({
               </div>
 
               <div className="col-span-1 flex flex-col items-center">
-                <div className="rounded-lg bg-white p-3 shadow">
+                <div className="rounded-lg bg-teal-100 p-3 shadow">
                   <QRCode
                     value={qrData}
                     size={180}
