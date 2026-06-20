@@ -89,6 +89,7 @@ export class AuthController {
     const accessToken = this.authService.generateAccessToken(
       user.id,
       user.email,
+      user.role,
     );
     const refreshToken = await this.authService.generateAndStoreRefreshToken(
       user.id,
@@ -161,6 +162,7 @@ export class AuthController {
     const accessToken = this.authService.generateAccessToken(
       user.id,
       user.email,
+      user.role,
     );
     const refreshToken = await this.authService.generateAndStoreRefreshToken(
       user.id,

@@ -10,9 +10,10 @@ import { DEFAULT_AVATAR_URL } from './app-assets';
 export enum USER_ROLE {
   RIDER = 'rider',
   PASSENGER = 'passenger',
+  ADMIN = 'admin',
 }
 
-export const USER_ROLES = [USER_ROLE.RIDER, USER_ROLE.PASSENGER] as const;
+export const USER_ROLES = [USER_ROLE.RIDER, USER_ROLE.PASSENGER, USER_ROLE.ADMIN] as const;
 export type UserRoleType = (typeof USER_ROLES)[number];
 
 /**

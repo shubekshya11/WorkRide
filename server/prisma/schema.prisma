@@ -19,7 +19,7 @@ model User {
   fullname          String
   email             String             @unique
   password          String
-  role              String
+  role              UserRole           @default(RIDER)
   phone             String?
   address           String?
   profilePicture    String?
@@ -39,6 +39,12 @@ model User {
   feedbackGiven     Feedback[]         @relation("FromUser")
   feedbackReceived  Feedback[]         @relation("ToUser")
   refreshTokens     RefreshToken[] // JWT refresh tokens
+}
+
+enum UserRole {
+  RIDER
+  PASSENGER
+  ADMIN
 }
 
 model RefreshToken {

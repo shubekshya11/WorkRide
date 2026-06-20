@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsEmail, IsIn, IsEnum } from 'class-validator';
+import { USER_ROLE } from '../constants/enums';
 
 export class LogoutDto {
   @IsString()
@@ -27,8 +28,8 @@ export class SignupDto {
   @IsString()
   password: string;
 
-  @IsString()
-  role: string;
+  @IsEnum(USER_ROLE)
+  role: USER_ROLE;
 
   @IsOptional()
   @IsString()

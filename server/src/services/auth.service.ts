@@ -19,9 +19,9 @@ export class AuthService {
   /**
    * Generate access token (short-lived, 1 hour)
    */
-  generateAccessToken(userId: number, email: string): string {
+  generateAccessToken(userId: number, email: string, role: string): string {
     return this.jwtService.sign(
-      { sub: userId, email },
+      { sub: userId, email, role },
       {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: (this.configService.get<string>('JWT_EXPIRES_IN') ||
@@ -104,6 +104,7 @@ export class AuthService {
     return this.generateAccessToken(
       storedToken.user.id,
       storedToken.user.email,
+      storedToken.user.role,
     );
   }
 
