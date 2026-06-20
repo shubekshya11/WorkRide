@@ -69,16 +69,19 @@ export function useCurrentRide(userId?: number): UseCurrentRideReturn {
     fetchCurrentRide();
   }, [fetchCurrentRide]);
 
-  // Periodically refresh current ride data every 30 seconds to keep expiry time accurate
+  // Poll while user has an in-progress ride; faster during ACTIVE search window
   useEffect(() => {
-    if (!userId || !hasActiveRide) return;
+    if (!userId || !hasActiveRide || !currentRide) return;
+
+    const pollInterval =
+      currentRide.status === RIDE_STATUS.ACTIVE ? 10000 : 30000;
 
     const interval = setInterval(() => {
       fetchCurrentRide();
-    }, 30000); // 30 seconds
+    }, pollInterval);
 
     return () => clearInterval(interval);
-  }, [fetchCurrentRide, userId, hasActiveRide]);
+  }, [fetchCurrentRide, userId, hasActiveRide, currentRide?.status]);
 
   return {
     currentRide,

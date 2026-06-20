@@ -1,5 +1,4 @@
 import { usePWA } from '../../hooks/usePWA';
-import logo from '../../assets/logo.svg';
 
 export const PWAInstallButton = () => {
   const { installPrompt, isAppInstalled, installApp } = usePWA();
@@ -7,26 +6,22 @@ export const PWAInstallButton = () => {
   if (isAppInstalled || !installPrompt) return null;
 
   return (
-    <div className="flex w-fit items-center justify-start gap-1.5 rounded-full border border-teal-50 bg-teal-50 p-1 text-dark shadow dark:border-teal-600 dark:bg-teal-300">
+    <div className="flex w-fit max-w-md items-center justify-start gap-3 rounded-2xl border border-teal-700/50 bg-teal-800/60 p-3 text-teal-50">
       <button
         type="button"
         onClick={installApp}
-        className="transition-150 group flex items-center gap-2 rounded-full bg-teal-950 py-3 pl-4 pr-5 text-xs text-white shadow-lg hover:bg-teal-700 sm:text-sm"
+        className="transition-150 group flex shrink-0 items-center gap-2 rounded-full bg-teal-300 py-3 pl-4 pr-5 text-xs font-medium text-teal-950 shadow-lg hover:bg-teal-200 sm:text-sm"
       >
         <img
-          src={logo}
-          alt="Logo"
-          className="group-hover:filter-white transition-150 size-4 scale-125 object-contain sm:size-5 sm:scale-110"
+          src="/pwa-64x64.png"
+          alt="WorkRide"
+          className="size-5 object-contain sm:size-6"
         />
         Install App
       </button>
-      <p className="max-w-xs flex-1 text-xs font-extralight">
-        Install our Progressive Web App (PWA) for quick access and a seamless
-        experience.
-        {/* Install our Progressive Web App (PWA) for quick access and a
-              seamless experience. Unlike traditional apps, PWAs work directly
-              from your browser, offering offline support and faster performance
-              without needing to visit an app store. */}
+      <p className="flex-1 text-xs font-extralight leading-relaxed text-teal-100">
+        Install WorkRide as an app for quick access, offline support, and a
+        native-like experience.
       </p>
     </div>
   );

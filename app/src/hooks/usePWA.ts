@@ -6,41 +6,42 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export const usePWA = () => {
-  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const [installPrompt, setInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setInstallPrompt(e);
+      setInstallPrompt(e as BeforeInstallPromptEvent);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setInstallPrompt(null);
+    };
 
-    // Check if app is already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsAppInstalled(true);
     }
 
-    window.addEventListener('appinstalled', () => {
-      setIsAppInstalled(true);
-    });
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener(
         'beforeinstallprompt',
         handleBeforeInstallPrompt,
       );
-      };
-    }, [installPrompt]);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
 
   const installApp = async (): Promise<boolean> => {
     if (!installPrompt) return false;
 
-    const deferredPrompt = installPrompt as BeforeInstallPromptEvent;
-    deferredPrompt.prompt();
-
-    const { outcome } = await deferredPrompt.userChoice;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
     setInstallPrompt(null);
 
     return outcome === 'accepted';

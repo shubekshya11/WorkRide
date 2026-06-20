@@ -6,6 +6,8 @@ export const API_RIDES_HISTORY = `${API_RIDES}/history`;
 
 export const API_RIDES_FEEDBACK = `${API_RIDES}/feedback`;
 
+export const API_RIDES_COMPLETE = `${API_RIDES}/:id/complete`;
+
 export const API_USER_KARMA_POINTS = `${API_RIDES}/user/:userId/karma-points`;
 
 export const API_USER_CREDIT_SCORE = `${API_RIDES}/user/:userId/credit-score`;

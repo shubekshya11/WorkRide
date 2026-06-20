@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { footerLinks } from '../constants/data';
 import { getCurrentYear } from '../utils/functions';
-// import { PWAInstallButton } from '../components/ui/PWAInstallButton';
+import { PWAInstallButton } from '../components/ui/PWAInstallButton';
 
 const Footer = () => {
   return (
@@ -18,7 +18,7 @@ const Footer = () => {
               sustainable future.
             </p>
           </div>
-          {/* <PWAInstallButton /> */}
+          <PWAInstallButton />
         </div>
 
         <div className="flex flex-col items-start gap-4 lg:items-end">

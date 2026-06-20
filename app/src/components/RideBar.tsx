@@ -24,6 +24,8 @@ import { apiFetch } from '../utils/api';
 import { useSocket } from '../utils/useSocket';
 import { useRideEvent } from '../utils/useRideEvent';
 import { getUserId, getUserData } from '../utils/auth';
+import { API_RIDES_COMPLETE } from '../constants/api';
+import { dispatchRideStatusChanged } from '../utils/customEvents';
 
 import { RideFormData, RideBarProps, UserDetails } from '../interfaces/types';
 
@@ -343,22 +345,31 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
       registerUserOnConnect();
     }
 
-    // Listen for ride status updates (including expiry)
+    // Listen for ride status updates (including expiry, confirmation, completion)
     socket.on(
       'rideStatusUpdate',
       (payload: { userId: number; status: string }) => {
         if (payload.userId === user?.id) {
           if (payload.status === RIDE_STATUS.EXPIRED) {
-            // Handle ride expiry
             setShowRideStatusModal(false);
             setLastSearchParams(null);
           }
 
-          // Refetch current ride data to get updated status
           refetchCurrentRide();
         }
       },
     );
+
+    socket.on('rideConfirmed', () => {
+      localStorage.setItem('rideStatus', RIDE_STATUS.CONFIRMED);
+      setShowModal(false);
+      refetchCurrentRide();
+    });
+
+    socket.on('rideCompleted', () => {
+      localStorage.setItem('rideStatus', RIDE_STATUS.COMPLETED);
+      refetchCurrentRide();
+    });
 
     socket.on('disconnect', () => {
       console.log('Disconnected from WebSocket server');
@@ -367,6 +378,8 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
     return () => {
       socket.off('connect', registerUserOnConnect);
       socket.off('rideStatusUpdate');
+      socket.off('rideConfirmed');
+      socket.off('rideCompleted');
       socket.off('disconnect');
     };
   }, [user, socket, refetchCurrentRide]);
@@ -473,6 +486,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
         );
 
         setRidesFound((prev) => prev.filter((r) => r.id !== ride.id));
+        localStorage.setItem('rideStatus', RIDE_STATUS.CONFIRMED);
         triggerRideConfirmed({
           id: ride.id,
           from: ride.from,
@@ -483,7 +497,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
           status: RIDE_STATUS.CONFIRMED,
           riderId: ride.riderId,
         });
-        // Toast notification will be handled by SocketManager for both users
+        await refetchCurrentRide();
         setShowModal(false);
       } catch (apiError) {
         console.error('Failed to fetch user rides or confirm:', apiError);
@@ -575,13 +589,56 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
     setShowRideStatusModal(false);
     setLastSearchParams(null);
 
-    // Use a fixed toast ID to prevent duplicates
     toast.error('Your ride has expired. Please create a new ride request.', {
-      toastId: 'ride-expired', // This prevents duplicate toasts
+      toastId: 'ride-expired',
     });
 
-    // Refetch current ride data to get updated status
     await refetchCurrentRide();
+  };
+
+  const navigateToRideDetails = (ride: {
+    id: number;
+    from: string;
+    to: string;
+    message: string;
+    role: USER_ROLE;
+    timestamp: string;
+  }) => {
+    navigate(
+      `/ride-details?id=${ride.id}&from=${encodeURIComponent(ride.from)}&to=${encodeURIComponent(ride.to)}&message=${encodeURIComponent(ride.message)}&role=${encodeURIComponent(ride.role)}&timestamp=${encodeURIComponent(ride.timestamp)}`,
+    );
+  };
+
+  const handleCompleteRide = async () => {
+    if (!currentRide?.id || !user) {
+      toast.error('No confirmed ride to complete.');
+      return;
+    }
+
+    if (currentRide.status !== RIDE_STATUS.CONFIRMED) {
+      toast.error('Only confirmed rides can be completed.');
+      return;
+    }
+
+    try {
+      await apiFetch(
+        `${import.meta.env.VITE_API_BASE_URL}${API_RIDES_COMPLETE.replace(':id', String(currentRide.id))}`,
+        { method: 'POST' },
+      );
+
+      localStorage.setItem('rideStatus', RIDE_STATUS.COMPLETED);
+      dispatchRideStatusChanged({ status: RIDE_STATUS.COMPLETED });
+      toast.success('Ride completed! Please provide feedback.');
+      await refetchCurrentRide();
+      navigateToRideDetails(currentRide);
+    } catch {
+      toast.error('Failed to complete ride. Please try again.');
+    }
+  };
+
+  const handleProvideFeedback = () => {
+    if (!currentRide) return;
+    navigateToRideDetails(currentRide);
   };
 
   // Determine if the user's role matches the RideBar's role (case-insensitive)
@@ -594,6 +651,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
     // Use real backend data if available
     if (currentRide && hasActiveRide) {
       return {
+        id: currentRide.id,
         from: currentRide.from,
         to: currentRide.to,
         message: currentRide.message,
@@ -603,6 +661,8 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
         originalDuration: currentRide.expiryTimeSeconds,
         status: currentRide.status,
         timestamp: currentRide.timestamp,
+        riderId: currentRide.riderId,
+        passengerId: currentRide.passengerId,
       };
     }
 
@@ -846,6 +906,8 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
                 details={details}
                 onSearchAgain={handleSearchAgain}
                 onCancelRide={handleCancelRide}
+                onCompleteRide={handleCompleteRide}
+                onProvideFeedback={handleProvideFeedback}
                 onExpiry={handleRideExpiry}
               />
             );
@@ -870,7 +932,10 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
       {ridesFound.length === 0 &&
         !showModal &&
         hasActiveRide &&
-        currentRide?.status === RIDE_STATUS.ACTIVE && (
+        currentRide &&
+        (currentRide.status === RIDE_STATUS.ACTIVE ||
+          currentRide.status === RIDE_STATUS.CONFIRMED ||
+          currentRide.status === RIDE_STATUS.COMPLETED) && (
           <button
             type="button"
             aria-label="Current Ride Status"

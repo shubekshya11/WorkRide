@@ -188,24 +188,29 @@ export const SocketManager = ({ children }: SocketManagerProps) => {
             return;
           }
 
-          // Check if user has already submitted feedback
           const feedbackKey = getFeedbackKey({ id: ride.id }, currentUserId);
           const hasSubmittedFeedback =
             localStorage.getItem(feedbackKey) === 'true';
 
           if (!hasSubmittedFeedback) {
-            // Show toast notifications for both users
             toast.success('Your ride has been completed!');
             toast.info('Please provide feedback to earn rewards.', {
               autoClose: 10000,
             });
           }
 
-          // Trigger custom event for components that need to update
           dispatchRideStatusChanged({
             status: RIDE_STATUS.COMPLETED,
             ride: { ...ride, role: ride.role as USER_ROLE },
           });
+
+          navigate(
+            `/ride-details?id=${ride.id}&from=${encodeURIComponent(ride.from)}&to=${encodeURIComponent(
+              ride.to,
+            )}&message=${encodeURIComponent(ride.message)}&role=${encodeURIComponent(
+              ride.role,
+            )}&timestamp=${encodeURIComponent(ride.timestamp ?? '')}`,
+          );
 
           log(
             `✅ Ride completed! User can now provide feedback via the button`,

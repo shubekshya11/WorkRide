@@ -1405,8 +1405,18 @@ export class RideController {
 
     const activeRide = await this.prisma.ride.findFirst({
       where: {
-        createdBy: userId,
-        status: RIDE_STATUS.ACTIVE,
+        OR: [
+          { createdBy: userId },
+          { riderId: userId },
+          { passengerId: userId },
+        ],
+        status: {
+          in: [
+            RIDE_STATUS.ACTIVE,
+            RIDE_STATUS.CONFIRMED,
+            RIDE_STATUS.COMPLETED,
+          ],
+        },
       },
       include: {
         rider: true,
@@ -1420,12 +1430,14 @@ export class RideController {
       return { hasActiveRide: false, ride: null };
     }
 
-    // Calculate expiry information
+    // Calculate expiry information (only ACTIVE rides expire)
     const now = getNow();
     const rideCreationTime = new Date(activeRide.timestamp);
 
     const remainingTimeSeconds =
-      this.calculateRemainingTimeSeconds(rideCreationTime);
+      activeRide.status === RIDE_STATUS.ACTIVE
+        ? this.calculateRemainingTimeSeconds(rideCreationTime)
+        : 0;
 
     // Calculate the exact expiry time for logging purposes
     const expiryTime = new Date(
@@ -1469,7 +1481,7 @@ export class RideController {
 
     const ridesToExpire = await this.prisma.ride.findMany({
       where: {
-        status: { in: [RIDE_STATUS.ACTIVE, RIDE_STATUS.CONFIRMED] }, // Expire both ACTIVE and CONFIRMED rides
+        status: RIDE_STATUS.ACTIVE, // Only expire ACTIVE rides, not CONFIRMED
         timestamp: { lt: cutoffTime },
       },
       select: { id: true, timestamp: true, createdBy: true, status: true },
@@ -1478,7 +1490,7 @@ export class RideController {
     if (ridesToExpire.length > 0) {
       this.logger.log({
         level: 'info',
-        message: `Expiring ${ridesToExpire.length} old rides`,
+        message: `Expiring ${ridesToExpire.length} old ACTIVE rides`,
         tag: 'ride',
         now: now.toISOString(),
         cutoffTime: cutoffTime.toISOString(),
@@ -1494,7 +1506,7 @@ export class RideController {
 
     await this.prisma.ride.updateMany({
       where: {
-        status: { in: [RIDE_STATUS.ACTIVE, RIDE_STATUS.CONFIRMED] }, // Expire both ACTIVE and CONFIRMED rides
+        status: RIDE_STATUS.ACTIVE, // Only expire ACTIVE rides, not CONFIRMED
         timestamp: { lt: cutoffTime },
       },
       data: { status: RIDE_STATUS.EXPIRED },
