@@ -165,7 +165,7 @@ export class UsersController {
 
     const updatedUser = await this.prisma.user.update({
       where: { id: parseInt(id, 10) },
-      data: updateData,
+      data: updateData as Record<string, unknown>,
       select: {
         id: true,
         fullname: true,
@@ -260,7 +260,7 @@ export class UsersController {
       throw new NotFoundException('User not found');
     }
 
-    if (user.role === USER_ROLE.ADMIN) {
+    if (user.role === 'ADMIN') {
       throw new BadRequestException('Cannot delete admin users');
     }
 

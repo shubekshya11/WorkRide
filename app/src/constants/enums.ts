@@ -13,6 +13,22 @@ export enum USER_ROLE {
   ADMIN = 'admin',
 }
 
+export enum RIDER_APPROVAL_STATUS {
+  PENDING_RIDER_APPROVAL = 'PENDING_RIDER_APPROVAL',
+  APPROVED_RIDER = 'APPROVED_RIDER',
+  REJECTED_RIDER = 'REJECTED_RIDER',
+}
+
+export const PROFILE_FIELD_LABELS: Record<string, string> = {
+  profilePicture: 'Profile photo',
+  employeeId: 'Employee ID',
+  department: 'Department',
+  phone: 'Phone',
+  address: 'Address',
+  emergencyContact: 'Emergency contact',
+  dateOfBirth: 'Date of birth',
+};
+
 export const USER_ROLES = [USER_ROLE.RIDER, USER_ROLE.PASSENGER, USER_ROLE.ADMIN] as const;
 export type UserRoleType = (typeof USER_ROLES)[number];
 

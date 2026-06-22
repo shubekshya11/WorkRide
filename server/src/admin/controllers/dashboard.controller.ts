@@ -31,10 +31,10 @@ export class DashboardController {
     ]);
 
     const ridersCount = await this.prisma.user.count({
-      where: { role: USER_ROLE.RIDER },
+      where: { role: 'RIDER' },
     });
     const passengersCount = await this.prisma.user.count({
-      where: { role: USER_ROLE.PASSENGER },
+      where: { role: 'PASSENGER' },
     });
 
     this.logger.log({

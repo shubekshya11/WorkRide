@@ -9,6 +9,9 @@ import { AuthController } from './auth.controller';
 import { KarmaController } from './karma.controller';
 import { LogsController } from './logs.controller';
 import { RideController } from './ride.controller';
+import { OnboardingController } from './onboarding/onboarding.controller';
+import { RiderApplicationController } from './rider-application/rider-application.controller';
+import { UploadController } from './upload/upload.controller';
 
 import { AdminModule } from './admin/admin.module';
 
@@ -16,6 +19,7 @@ import { AppService } from './app.service';
 import { EnvService } from './env.service';
 import { PrismaService } from './prisma.service';
 import { AuthService } from './services/auth.service';
+import { ProfileService } from './services/profile.service';
 import { KarmaRedemptionService } from './services/karma-redemption.service';
 
 import { RideGateway } from './rides/rides.gateway';
@@ -43,6 +47,9 @@ import { winstonLoggerConfig } from './logger.config';
   controllers: [
     AppController,
     AuthController,
+    OnboardingController,
+    RiderApplicationController,
+    UploadController,
     KarmaController,
     LogsController,
     RideController,
@@ -52,6 +59,7 @@ import { winstonLoggerConfig } from './logger.config';
     EnvService,
     PrismaService,
     AuthService,
+    ProfileService,
     KarmaRedemptionService,
     RideGateway,
     JwtStrategy,

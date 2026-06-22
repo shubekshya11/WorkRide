@@ -19,10 +19,17 @@ model User {
   fullname          String
   email             String             @unique
   password          String
-  role              UserRole           @default(RIDER)
+  role              UserRole           @default(PASSENGER)
   phone             String?
   address           String?
   profilePicture    String?
+  employeeId        String?            @unique
+  department        String?
+  emergencyContact  String?
+  dateOfBirth       DateTime?
+  mustChangePassword Boolean           @default(false)
+  isSuspended       Boolean            @default(false)
+  suspendedReason   String?
   ratings           Float? // average rating
   rides             Ride[]             @relation("RiderRides")
   rideRequests      RideRequest[]
@@ -39,12 +46,38 @@ model User {
   feedbackGiven     Feedback[]         @relation("FromUser")
   feedbackReceived  Feedback[]         @relation("ToUser")
   refreshTokens     RefreshToken[] // JWT refresh tokens
+  riderApplication  RiderApplication?
 }
 
 enum UserRole {
   RIDER
   PASSENGER
   ADMIN
+}
+
+enum RiderApprovalStatus {
+  PENDING_RIDER_APPROVAL
+  APPROVED_RIDER
+  REJECTED_RIDER
+}
+
+model RiderApplication {
+  id                       Int                 @id @default(autoincrement())
+  userId                   Int                 @unique
+  user                     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  drivingLicenseNumber     String
+  drivingLicenseImageUrl   String
+  vehicleNumber            String
+  vehicleType              String
+  vehicleModel             String
+  vehicleColor             String
+  vehicleRegistrationUrl   String
+  status                   RiderApprovalStatus @default(PENDING_RIDER_APPROVAL)
+  rejectionReason          String?
+  reviewedAt               DateTime?
+  reviewedById             Int?
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
 }
 
 model RefreshToken {

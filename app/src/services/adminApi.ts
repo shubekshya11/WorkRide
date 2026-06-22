@@ -271,6 +271,69 @@ class AdminApiService {
     ).toString();
     return this.request<LogsResponse>(`/logs/all?${queryString}`);
   }
+
+  async getEmployees(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  } = {}) {
+    const queryString = new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, value]) => value !== undefined)
+        .map(([key, value]) => [key, String(value)]),
+    ).toString();
+    return this.request<{
+      employees: Array<Record<string, unknown>>;
+      pagination: Pagination;
+    }>(`/admin/employees?${queryString}`);
+  }
+
+  async createEmployee(data: {
+    fullname: string;
+    email: string;
+    temporaryPassword: string;
+    employeeId?: string;
+    department?: string;
+    phone?: string;
+  }) {
+    return this.request<{
+      message: string;
+      user: Record<string, unknown>;
+      temporaryPassword: string;
+    }>('/admin/employees', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getRiderApplications(params: {
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}) {
+    const queryString = new URLSearchParams(
+      Object.entries(params)
+        .filter(([_, value]) => value !== undefined)
+        .map(([key, value]) => [key, String(value)]),
+    ).toString();
+    return this.request<{
+      applications: Array<Record<string, unknown>>;
+      pagination: Pagination;
+    }>(`/admin/rider-applications?${queryString}`);
+  }
+
+  async approveRiderApplication(id: number) {
+    return this.request<{ message: string }>(`/admin/rider-applications/${id}/approve`, {
+      method: 'POST',
+    });
+  }
+
+  async rejectRiderApplication(id: number, reason: string) {
+    return this.request<{ message: string }>(`/admin/rider-applications/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  }
 }
 
 export const adminApi = new AdminApiService();

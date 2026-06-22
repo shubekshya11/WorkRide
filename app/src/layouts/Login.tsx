@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import type { LoginFormData, AuthResponse } from '../interfaces/types';
 
 import { API_AUTH_LOGIN } from '../constants/api';
-import { ROUTE_ADMIN_DASHBOARD } from '../constants/routes';
+import { ROUTE_ADMIN_DASHBOARD, ROUTE_ONBOARDING_CHANGE_PASSWORD } from '../constants/routes';
 import { USER_ROLE } from '../constants/enums';
 
 import { useAuth } from '../hooks/useAuth';
@@ -56,7 +56,7 @@ const Login = () => {
         throw new Error(error.message || 'Login failed');
       }
 
-      const result: AuthResponse = await response.json();
+      const result = await response.json() as AuthResponse & { mustChangePassword?: boolean };
 
       setAuthData(result);
       setUser(result.user);
@@ -70,7 +70,9 @@ const Login = () => {
         null;
       const redirectAfterLogin = localStorage.getItem('redirectAfterLogin');
 
-      if (redirectAfterLogin) {
+      if (result.mustChangePassword) {
+        navigate(ROUTE_ONBOARDING_CHANGE_PASSWORD);
+      } else if (redirectAfterLogin) {
         localStorage.removeItem('redirectAfterLogin');
         navigate(redirectAfterLogin);
       } else if (from) {

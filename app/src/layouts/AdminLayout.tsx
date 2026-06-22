@@ -10,18 +10,22 @@ import {
   LogOut,
   Menu,
   X,
+  UserCheck,
+  Building2,
 } from 'lucide-react';
 
 import { useAuth } from '../hooks/useAuth';
 
 import {
   ROUTE_ADMIN_DASHBOARD,
-  ROUTE_ADMIN_USERS,
+  ROUTE_ADMIN_EMPLOYEES,
   ROUTE_ADMIN_RIDES,
   ROUTE_ADMIN_ANALYTICS,
   ROUTE_ADMIN_LOGS,
   ROUTE_ADMIN_SETTINGS,
+  ROUTE_ADMIN_RIDER_APPROVALS,
   ROUTE_LOGIN,
+  ROUTE_ADMIN_USERS,
 } from '../constants/routes';
 
 const AdminLayout: React.FC = () => {
@@ -44,6 +48,8 @@ const AdminLayout: React.FC = () => {
 
   const navigation = [
     { name: 'Dashboard', href: ROUTE_ADMIN_DASHBOARD, icon: LayoutDashboard },
+    { name: 'Employees', href: ROUTE_ADMIN_EMPLOYEES, icon: Building2 },
+    { name: 'Rider Approvals', href: ROUTE_ADMIN_RIDER_APPROVALS, icon: UserCheck },
     { name: 'Users', href: ROUTE_ADMIN_USERS, icon: Users },
     { name: 'Rides', href: ROUTE_ADMIN_RIDES, icon: Car },
     { name: 'Analytics', href: ROUTE_ADMIN_ANALYTICS, icon: TrendingUp },

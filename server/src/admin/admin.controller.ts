@@ -12,6 +12,7 @@ import {
   BadRequestException,
   Inject,
   ValidationPipe,
+  Request,
 } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
@@ -27,12 +28,21 @@ import {
   SuspendUserDto,
   CancelRideDto,
 } from '../dto/admin.dto';
+import {
+  CreateEmployeeDto,
+  RejectRiderApplicationDto,
+} from '../dto/onboarding.dto';
+import { ProfileService } from '../services/profile.service';
+import * as bcrypt from 'bcrypt';
+import { AUTH_CONSTANTS } from '../constants/auth.constants';
+import { AuthenticatedRequest } from '../interfaces/types';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminController {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly profileService: ProfileService,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -56,10 +66,10 @@ export class AdminController {
     ]);
 
     const ridersCount = await this.prisma.user.count({
-      where: { role: USER_ROLE.RIDER },
+      where: { role: 'RIDER' },
     });
     const passengersCount = await this.prisma.user.count({
-      where: { role: USER_ROLE.PASSENGER },
+      where: { role: 'PASSENGER' },
     });
 
     this.logger.log({
@@ -220,7 +230,7 @@ export class AdminController {
 
     const updatedUser = await this.prisma.user.update({
       where: { id: parseInt(id, 10) },
-      data: updateData,
+      data: updateData as Record<string, unknown>,
       select: {
         id: true,
         fullname: true,
@@ -322,7 +332,7 @@ export class AdminController {
     }
 
     // Don't allow deleting admin users
-    if (user.role === USER_ROLE.ADMIN) {
+    if (user.role === 'ADMIN') {
       throw new BadRequestException('Cannot delete admin users');
     }
 
@@ -880,6 +890,299 @@ export class AdminController {
       topKarmaUsers: users,
       totalKarmaPoints: totalKarmaPoints._sum.karmaPoints || 0,
       totalCreditScore: totalCreditScore._sum.creditScore || 0,
+    };
+  }
+
+  // ==================== EMPLOYEE MANAGEMENT ====================
+
+  @Post('employees')
+  async createEmployee(@Body(ValidationPipe) dto: CreateEmployeeDto) {
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (existing) {
+      throw new BadRequestException('Email already registered');
+    }
+
+    if (dto.employeeId) {
+      const existingEmployeeId = await this.prisma.user.findUnique({
+        where: { employeeId: dto.employeeId },
+      });
+      if (existingEmployeeId) {
+        throw new BadRequestException('Employee ID already in use');
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      dto.temporaryPassword,
+      AUTH_CONSTANTS.BCRYPT_SALT_ROUNDS,
+    );
+
+    const user = await this.prisma.user.create({
+      data: {
+        fullname: dto.fullname,
+        email: dto.email,
+        password: hashedPassword,
+        role: 'PASSENGER',
+        employeeId: dto.employeeId,
+        department: dto.department,
+        phone: dto.phone,
+        mustChangePassword: true,
+      },
+      select: {
+        id: true,
+        fullname: true,
+        email: true,
+        role: true,
+        employeeId: true,
+        department: true,
+        phone: true,
+        mustChangePassword: true,
+        createdAt: true,
+      },
+    });
+
+    this.logger.log({
+      level: 'info',
+      message: 'Admin created employee account',
+      tag: 'admin',
+      userId: user.id,
+      email: user.email,
+    });
+
+    return {
+      message: 'Employee account created. Share the temporary password securely.',
+      user,
+      temporaryPassword: dto.temporaryPassword,
+    };
+  }
+
+  @Get('employees')
+  async listEmployees(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+  ) {
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
+
+    const where: Record<string, unknown> = {
+      role: { not: 'ADMIN' },
+    };
+
+    if (search) {
+      where.OR = [
+        { fullname: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { employeeId: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [employees, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          fullname: true,
+          email: true,
+          role: true,
+          employeeId: true,
+          department: true,
+          phone: true,
+          mustChangePassword: true,
+          isSuspended: true,
+          profilePicture: true,
+          address: true,
+          emergencyContact: true,
+          dateOfBirth: true,
+          createdAt: true,
+          riderApplication: { select: { status: true, rejectionReason: true } },
+        },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    const employeesWithCompleteness = employees.map((employee) => ({
+      ...employee,
+      profileCompleteness: this.profileService.calculateCompleteness(employee)
+        .percentage,
+    }));
+
+    return {
+      employees: employeesWithCompleteness,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
+  }
+
+  // ==================== RIDER APPROVAL QUEUE ====================
+
+  @Get('rider-applications')
+  async listRiderApplications(
+    @Query('status') status?: string,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
+
+    const where: Record<string, unknown> = {};
+    if (status) {
+      where.status = status;
+    }
+
+    const [applications, total] = await Promise.all([
+      this.prisma.riderApplication.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+              employeeId: true,
+              department: true,
+              phone: true,
+              profilePicture: true,
+            },
+          },
+        },
+      }),
+      this.prisma.riderApplication.count({ where }),
+    ]);
+
+    return {
+      applications,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
+  }
+
+  @Post('rider-applications/:id/approve')
+  async approveRiderApplication(
+    @Param('id') id: string,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    const application = await this.prisma.riderApplication.findUnique({
+      where: { id: parseInt(id, 10) },
+      include: { user: true },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Rider application not found');
+    }
+
+    if (application.status !== 'PENDING_RIDER_APPROVAL') {
+      throw new BadRequestException('Application is not pending approval');
+    }
+
+    const [updatedApplication] = await this.prisma.$transaction([
+      this.prisma.riderApplication.update({
+        where: { id: application.id },
+        data: {
+          status: 'APPROVED_RIDER',
+          reviewedAt: new Date(),
+          reviewedById: req.user.userId,
+          rejectionReason: null,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              fullname: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      }),
+      this.prisma.user.update({
+        where: { id: application.userId },
+        data: { role: 'RIDER' },
+      }),
+    ]);
+
+    this.logger.log({
+      level: 'info',
+      message: 'Admin approved rider application',
+      tag: 'admin',
+      applicationId: application.id,
+      userId: application.userId,
+    });
+
+    return {
+      message: 'Rider application approved',
+      application: updatedApplication,
+    };
+  }
+
+  @Post('rider-applications/:id/reject')
+  async rejectRiderApplication(
+    @Param('id') id: string,
+    @Body(ValidationPipe) dto: RejectRiderApplicationDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    const application = await this.prisma.riderApplication.findUnique({
+      where: { id: parseInt(id, 10) },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Rider application not found');
+    }
+
+    if (application.status !== 'PENDING_RIDER_APPROVAL') {
+      throw new BadRequestException('Application is not pending approval');
+    }
+
+    const updatedApplication = await this.prisma.riderApplication.update({
+      where: { id: application.id },
+      data: {
+        status: 'REJECTED_RIDER',
+        rejectionReason: dto.reason,
+        reviewedAt: new Date(),
+        reviewedById: req.user.userId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullname: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    this.logger.log({
+      level: 'warn',
+      message: 'Admin rejected rider application',
+      tag: 'admin',
+      applicationId: application.id,
+      userId: application.userId,
+      reason: dto.reason,
+    });
+
+    return {
+      message: 'Rider application rejected',
+      application: updatedApplication,
     };
   }
 }

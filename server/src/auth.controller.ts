@@ -10,6 +10,7 @@ import {
   Controller,
   BadRequestException,
   UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
@@ -85,6 +86,12 @@ export class AuthController {
       });
       throw new UnauthorizedException('Invalid password');
     }
+
+    if (user.isSuspended) {
+      throw new ForbiddenException(
+        user.suspendedReason || 'Your account has been suspended',
+      );
+    }
     // Generate JWT tokens
     const accessToken = this.authService.generateAccessToken(
       user.id,
@@ -113,80 +120,15 @@ export class AuthController {
       user: userWithoutPassword,
       accessToken,
       refreshToken,
+      mustChangePassword: user.mustChangePassword,
     };
   }
 
   @Post('signup')
-  async signup(@Body() body: SignupDto) {
-    this.logger.log({
-      level: 'info',
-      message: `Signup attempt for email: ${body.email}, fullname: ${body.fullname}`,
-      tag: 'auth',
-      email: body.email,
-      fullname: body.fullname,
-    });
-
-    const existing = await this.prisma.user.findUnique({
-      where: { email: body.email },
-    });
-
-    if (existing) {
-      this.logger.log({
-        level: 'warn',
-        message: `Signup failed for email: ${body.email} - Email already registered`,
-        tag: 'error',
-        email: body.email,
-      });
-
-      throw new BadRequestException('Email already registered');
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      body.password,
-      AUTH_CONSTANTS.BCRYPT_SALT_ROUNDS,
+  async signup(@Body() _body: SignupDto) {
+    throw new ForbiddenException(
+      'Self-registration is disabled. Contact your administrator for an account.',
     );
-
-    const user = await this.prisma.user.create({
-      data: {
-        fullname: body.fullname,
-        email: body.email,
-        password: hashedPassword,
-        role: body.role,
-        phone: body.phone,
-        address: body.address,
-        profilePicture: body.profilePicture,
-        ratings: body.ratings,
-      },
-    });
-    // Generate JWT tokens
-    const accessToken = this.authService.generateAccessToken(
-      user.id,
-      user.email,
-      user.role,
-    );
-    const refreshToken = await this.authService.generateAndStoreRefreshToken(
-      user.id,
-    );
-
-    this.logger.log({
-      level: 'info',
-      message: `Signup successful for email: ${body.email}, fullname: ${body.fullname}`,
-      tag: 'auth',
-      email: body.email,
-      userId: user.id,
-    });
-
-    // Remove password field from user object for response
-    const userWithoutPassword = Object.fromEntries(
-      Object.entries(user).filter(([key]) => key !== 'password'),
-    );
-
-    return {
-      message: 'Signup successful',
-      user: userWithoutPassword,
-      accessToken,
-      refreshToken,
-    };
   }
 
   @Post('logout')
@@ -372,7 +314,7 @@ export class AuthController {
     delete allowedUpdates.password;
     const updatedUser = await this.prisma.user.update({
       where: { id: authenticatedUserId },
-      data: allowedUpdates,
+      data: allowedUpdates as Record<string, unknown>,
     });
     this.logger.log({
       level: 'info',

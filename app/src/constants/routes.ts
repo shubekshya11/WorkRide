@@ -21,3 +21,9 @@ export const ROUTE_ADMIN_RIDES = '/admin/rides';
 export const ROUTE_ADMIN_ANALYTICS = '/admin/analytics';
 export const ROUTE_ADMIN_LOGS = '/admin/logs';
 export const ROUTE_ADMIN_SETTINGS = '/admin/settings';
+export const ROUTE_ADMIN_EMPLOYEES = '/admin/employees';
+export const ROUTE_ADMIN_RIDER_APPROVALS = '/admin/rider-approvals';
+
+export const ROUTE_ONBOARDING_CHANGE_PASSWORD = '/onboarding/change-password';
+export const ROUTE_ONBOARDING_PROFILE = '/onboarding/profile';
+export const ROUTE_RIDER_APPLICATION = '/rider-application';

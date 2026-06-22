@@ -30,6 +30,18 @@ export const API_AUTH_USER = `${API_AUTH}/user`;
 
 export const API_AUTH_UPDATE = `${API_AUTH}/update`;
 
+export const API_AUTH_CHANGE_PASSWORD = `${API_AUTH}/change-password`;
+export const API_AUTH_ONBOARDING_STATUS = `${API_AUTH}/onboarding-status`;
+export const API_AUTH_PROFILE = `${API_AUTH}/profile`;
+export const API_AUTH_PROFILE_COMPLETENESS = `${API_AUTH}/profile-completeness`;
+
+export const API_UPLOAD = '/upload';
+export const API_RIDER_APPLICATIONS = '/rider-applications';
+export const API_RIDER_APPLICATIONS_ME = `${API_RIDER_APPLICATIONS}/me`;
+
+export const API_ADMIN_EMPLOYEES = '/admin/employees';
+export const API_ADMIN_RIDER_APPLICATIONS = '/admin/rider-applications';
+
 // Karma Redemption APIs
 export const API_KARMA = '/karma';
 

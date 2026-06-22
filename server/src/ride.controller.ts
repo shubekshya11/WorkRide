@@ -665,6 +665,25 @@ export class RideController {
         `Role mismatch: You're a '${user.role}', not a '${body.role}'.`,
       );
     }
+
+    if (body.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
+      const riderApplication = await this.prisma.riderApplication.findUnique({
+        where: { userId: authenticatedUserId },
+      });
+
+      if (
+        user.role.toLowerCase() !== USER_ROLE.RIDER.toLowerCase() ||
+        riderApplication?.status !== 'APPROVED_RIDER'
+      ) {
+        throw new BadRequestException(
+          'You must be an approved rider to post rides. Submit a rider application and wait for admin approval.',
+        );
+      }
+    }
+
+    if (user.isSuspended) {
+      throw new BadRequestException('Your account is suspended');
+    }
     // Prevent posting if user has an active or confirmed ride (regardless of time)
     const existingActiveRide = await this.prisma.ride.findFirst({
       where: {

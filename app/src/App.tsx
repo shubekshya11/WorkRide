@@ -24,6 +24,9 @@ import RideDetails from './pages/RideDetails';
 import Leaderboard from './pages/Leaderboard';
 import RoleBasedPage from './pages/RoleBasedPage';
 import SelfReflection from './pages/SelfReflection';
+import RiderApplication from './pages/RiderApplication';
+import ChangePassword from './pages/onboarding/ChangePassword';
+import CompleteProfile from './pages/onboarding/CompleteProfile';
 
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminUsers from './pages/admin/Users';
@@ -31,10 +34,13 @@ import AdminRides from './pages/admin/Rides';
 import AdminAnalytics from './pages/admin/Analytics';
 import AdminLogs from './pages/admin/Logs';
 import AdminSettings from './pages/admin/Settings';
+import AdminEmployees from './pages/admin/Employees';
+import AdminRiderApprovals from './pages/admin/RiderApprovals';
 
 import { GuestRoute } from './guards/GuestRoute';
 import { ProtectedRoute } from './guards/ProtectedRoute';
 import { AdminRoute } from './guards/AdminRoute';
+import { EmployeeRoute } from './guards/EmployeeRoute';
 
 import { SocketManager } from './components/SocketManager';
 
@@ -56,6 +62,9 @@ import {
   ROUTE_LOGS_DASHBOARD,
   ROUTE_ADMIN,
   ROUTE_ADMIN_LOGS,
+  ROUTE_ONBOARDING_CHANGE_PASSWORD,
+  ROUTE_ONBOARDING_PROFILE,
+  ROUTE_RIDER_APPLICATION,
 } from './constants/routes';
 
 import { RideEventProvider } from './contexts/RideEventContext';
@@ -71,7 +80,6 @@ const App: React.FC = () => {
             <SocketManager>
               <RouterToTop />
               <Routes>
-                {/* Admin routes — no Navbar/Footer */}
                 <Route
                   path={ROUTE_ADMIN}
                   element={
@@ -83,6 +91,8 @@ const App: React.FC = () => {
                   }
                 >
                   <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="employees" element={<AdminEmployees />} />
+                  <Route path="rider-approvals" element={<AdminRiderApprovals />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="rides" element={<AdminRides />} />
                   <Route path="analytics" element={<AdminAnalytics />} />
@@ -91,7 +101,23 @@ const App: React.FC = () => {
                   <Route index element={<Navigate to="dashboard" replace />} />
                 </Route>
 
-                {/* Main app — with Navbar/Footer */}
+                <Route
+                  path={ROUTE_ONBOARDING_CHANGE_PASSWORD}
+                  element={
+                    <ProtectedRoute>
+                      <ChangePassword />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={ROUTE_ONBOARDING_PROFILE}
+                  element={
+                    <ProtectedRoute>
+                      <CompleteProfile />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route element={<MainAppLayout />}>
                   <Route path={ROUTE_HOME} element={<Home />} />
                   <Route path={ROUTE_HELP} element={<FAQPage />} />
@@ -112,25 +138,33 @@ const App: React.FC = () => {
                   <Route
                     path={ROUTE_PROFILE}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <SelfReflection />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
                     }
                   />
                   <Route
                     path={ROUTE_RIDE_DETAILS}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <RideDetails />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
                     }
                   />
                   <Route
                     path={ROUTE_ROLE}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <RoleBasedPage />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_RIDER_APPLICATION}
+                    element={
+                      <EmployeeRoute>
+                        <RiderApplication />
+                      </EmployeeRoute>
                     }
                   />
                   <Route
@@ -144,25 +178,25 @@ const App: React.FC = () => {
                   <Route
                     path={ROUTE_REDEEM}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <RedeemPage />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
                     }
                   />
                   <Route
                     path={ROUTE_VIEW_SCORE}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <ViewScore />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
                     }
                   />
                   <Route
                     path={ROUTE_EARN_KARMA}
                     element={
-                      <ProtectedRoute>
+                      <EmployeeRoute>
                         <ViewKarma />
-                      </ProtectedRoute>
+                      </EmployeeRoute>
                     }
                   />
 
