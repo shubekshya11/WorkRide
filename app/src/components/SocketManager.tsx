@@ -12,7 +12,9 @@ import { SocketContext } from '../utils/SocketContext';
 import { dispatchRideStatusChanged } from '../utils/customEvents';
 
 const SERVER_URL =
-  import.meta.env.VITE_SOCKET_SERVER_URL || 'http://localhost:3001';
+  import.meta.env.VITE_SOCKET_SERVER_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://localhost:3000';
 const isDev = import.meta.env.MODE === 'development';
 
 interface SocketManagerProps {

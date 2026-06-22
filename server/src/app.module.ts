@@ -10,6 +10,8 @@ import { KarmaController } from './karma.controller';
 import { LogsController } from './logs.controller';
 import { RideController } from './ride.controller';
 
+import { AdminModule } from './admin/admin.module';
+
 import { AppService } from './app.service';
 import { EnvService } from './env.service';
 import { PrismaService } from './prisma.service';
@@ -36,6 +38,7 @@ import { winstonLoggerConfig } from './logger.config';
       }),
       global: true,
     }),
+    AdminModule,
   ],
   controllers: [
     AppController,

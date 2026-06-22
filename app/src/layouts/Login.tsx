@@ -2,12 +2,14 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import type { LoginFormData, AuthResponse } from '../interfaces/types';
 
 import { API_AUTH_LOGIN } from '../constants/api';
+import { ROUTE_ADMIN_DASHBOARD } from '../constants/routes';
+import { USER_ROLE } from '../constants/enums';
 
 import { useAuth } from '../hooks/useAuth';
 
@@ -22,6 +24,7 @@ const schema = yup.object().shape({
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useAuth();
 
   const {
@@ -62,10 +65,18 @@ const Login = () => {
 
       toast.success(`Login successful! Welcome, ${firstName}!`);
 
+      const from =
+        (location.state as { from?: { pathname: string } })?.from?.pathname ??
+        null;
       const redirectAfterLogin = localStorage.getItem('redirectAfterLogin');
+
       if (redirectAfterLogin) {
         localStorage.removeItem('redirectAfterLogin');
         navigate(redirectAfterLogin);
+      } else if (from) {
+        navigate(from);
+      } else if (result.user.role?.toLowerCase() === USER_ROLE.ADMIN) {
+        navigate(ROUTE_ADMIN_DASHBOARD);
       } else {
         navigate('/');
       }

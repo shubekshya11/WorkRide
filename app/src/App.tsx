@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import useTheme from './hooks/useTheme';
@@ -7,8 +7,8 @@ import RouterToTop from './utils/RouterToTop';
 
 import { AuthProvider } from './contexts/AuthContext';
 
-import Navbar from './layouts/Navbar';
-import Footer from './layouts/Footer';
+import MainAppLayout from './layouts/MainAppLayout';
+import AdminLayout from './layouts/AdminLayout';
 
 import Home from './pages/Home';
 import Brand from './pages/Brand';
@@ -23,11 +23,18 @@ import RedeemPage from './pages/RedeemPage';
 import RideDetails from './pages/RideDetails';
 import Leaderboard from './pages/Leaderboard';
 import RoleBasedPage from './pages/RoleBasedPage';
-import LogsDashboard from './pages/LogsDashboard';
 import SelfReflection from './pages/SelfReflection';
+
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/Users';
+import AdminRides from './pages/admin/Rides';
+import AdminAnalytics from './pages/admin/Analytics';
+import AdminLogs from './pages/admin/Logs';
+import AdminSettings from './pages/admin/Settings';
 
 import { GuestRoute } from './guards/GuestRoute';
 import { ProtectedRoute } from './guards/ProtectedRoute';
+import { AdminRoute } from './guards/AdminRoute';
 
 import { SocketManager } from './components/SocketManager';
 
@@ -47,6 +54,8 @@ import {
   ROUTE_LEADERBOARD,
   ROUTE_RIDE_DETAILS,
   ROUTE_LOGS_DASHBOARD,
+  ROUTE_ADMIN,
+  ROUTE_ADMIN_LOGS,
 } from './constants/routes';
 
 import { RideEventProvider } from './contexts/RideEventContext';
@@ -61,88 +70,105 @@ const App: React.FC = () => {
           <RideEventProvider>
             <SocketManager>
               <RouterToTop />
-              <Navbar />
               <Routes>
-                {/* Public Routes */}
-                <Route path={ROUTE_HOME} element={<Home />} />
-                <Route path={ROUTE_HELP} element={<FAQPage />} />
-                <Route path={ROUTE_ABOUT} element={<AboutPage />} />
-                <Route path={ROUTE_BRAND} element={<Brand />} />
-                <Route path={ROUTE_LEGAL} element={<LegalPage />} />
-                <Route path={ROUTE_LEADERBOARD} element={<Leaderboard />} />
+                {/* Admin routes — no Navbar/Footer */}
+                <Route
+                  path={ROUTE_ADMIN}
+                  element={
+                    <ProtectedRoute>
+                      <AdminRoute>
+                        <AdminLayout />
+                      </AdminRoute>
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="rides" element={<AdminRides />} />
+                  <Route path="analytics" element={<AdminAnalytics />} />
+                  <Route path="logs" element={<AdminLogs />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                  <Route index element={<Navigate to="dashboard" replace />} />
+                </Route>
 
-                {/* Guest Routes - Only for unauthenticated users */}
-                <Route
-                  path={ROUTE_LOGIN}
-                  element={
-                    <GuestRoute>
-                      <Login />
-                    </GuestRoute>
-                  }
-                />
+                {/* Main app — with Navbar/Footer */}
+                <Route element={<MainAppLayout />}>
+                  <Route path={ROUTE_HOME} element={<Home />} />
+                  <Route path={ROUTE_HELP} element={<FAQPage />} />
+                  <Route path={ROUTE_ABOUT} element={<AboutPage />} />
+                  <Route path={ROUTE_BRAND} element={<Brand />} />
+                  <Route path={ROUTE_LEGAL} element={<LegalPage />} />
+                  <Route path={ROUTE_LEADERBOARD} element={<Leaderboard />} />
 
-                {/* Protected Routes - Require authentication */}
-                <Route
-                  path={ROUTE_PROFILE}
-                  element={
-                    <ProtectedRoute>
-                      <SelfReflection />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_RIDE_DETAILS}
-                  element={
-                    <ProtectedRoute>
-                      <RideDetails />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_ROLE}
-                  element={
-                    <ProtectedRoute>
-                      <RoleBasedPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_LOGS_DASHBOARD}
-                  element={
-                    <ProtectedRoute>
-                      <LogsDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_REDEEM}
-                  element={
-                    <ProtectedRoute>
-                      <RedeemPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_VIEW_SCORE}
-                  element={
-                    <ProtectedRoute>
-                      <ViewScore />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={ROUTE_EARN_KARMA}
-                  element={
-                    <ProtectedRoute>
-                      <ViewKarma />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path={ROUTE_LOGIN}
+                    element={
+                      <GuestRoute>
+                        <Login />
+                      </GuestRoute>
+                    }
+                  />
 
-                {/* Catch-all route - Must be last */}
-                <Route path={ROUTE_404} element={<Error404 />} />
+                  <Route
+                    path={ROUTE_PROFILE}
+                    element={
+                      <ProtectedRoute>
+                        <SelfReflection />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_RIDE_DETAILS}
+                    element={
+                      <ProtectedRoute>
+                        <RideDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_ROLE}
+                    element={
+                      <ProtectedRoute>
+                        <RoleBasedPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_LOGS_DASHBOARD}
+                    element={
+                      <ProtectedRoute>
+                        <Navigate to={ROUTE_ADMIN_LOGS} replace />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_REDEEM}
+                    element={
+                      <ProtectedRoute>
+                        <RedeemPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_VIEW_SCORE}
+                    element={
+                      <ProtectedRoute>
+                        <ViewScore />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path={ROUTE_EARN_KARMA}
+                    element={
+                      <ProtectedRoute>
+                        <ViewKarma />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route path={ROUTE_404} element={<Error404 />} />
+                </Route>
               </Routes>
-              <Footer />
             </SocketManager>
           </RideEventProvider>
         </AuthProvider>

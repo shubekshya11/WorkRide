@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import error from '../assets/vector/bhaiya-ji.svg';
 import { ROUTE_HOME } from '../constants/routes';
 
-const BhaiyaJi = () => {
+const NoRidesFound = () => {
   return (
     <>
       <main className="flex h-screen flex-col items-center justify-center p-0">
@@ -26,4 +26,4 @@ const BhaiyaJi = () => {
   );
 };
 
-export default BhaiyaJi;
+export default NoRidesFound;
