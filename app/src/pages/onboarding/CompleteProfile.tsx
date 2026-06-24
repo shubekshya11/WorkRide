@@ -10,6 +10,7 @@ import {
 } from '../../services/onboardingApi';
 import { PROFILE_FIELD_LABELS } from '../../constants/enums';
 import { ROUTE_HOME } from '../../constants/routes';
+import { getCurrentUser } from '../../utils/authApi';
 
 const CompleteProfile: React.FC = () => {
   const navigate = useNavigate();
@@ -34,8 +35,31 @@ const CompleteProfile: React.FC = () => {
   const loadStatus = async () => {
     try {
       setLoading(true);
-      const data = await getOnboardingStatus();
+      const [data, userResponse] = await Promise.all([
+        getOnboardingStatus(),
+        getCurrentUser(),
+      ]);
       setStatus(data);
+
+      const user = userResponse.user as typeof userResponse.user & {
+        employeeId?: string;
+        department?: string;
+        emergencyContact?: string;
+        dateOfBirth?: string;
+      };
+
+      setForm({
+        fullname: user.fullname || '',
+        employeeId: user.employeeId || '',
+        department: user.department || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        emergencyContact: user.emergencyContact || '',
+        dateOfBirth: user.dateOfBirth
+          ? new Date(user.dateOfBirth).toISOString().slice(0, 10)
+          : '',
+        profilePicture: user.profilePicture || '',
+      });
     } catch {
       toast.error('Failed to load profile status');
     } finally {
@@ -77,8 +101,10 @@ const CompleteProfile: React.FC = () => {
       if (result.profileCompleteness >= 100) {
         navigate(ROUTE_HOME);
       }
-    } catch {
-      toast.error('Failed to update profile');
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to update profile';
+      toast.error(message);
     } finally {
       setSaving(false);
     }

@@ -150,7 +150,9 @@ export async function apiFetch<T>(
 
       if (!retryResponse.ok) {
         const error = await retryResponse.json().catch(() => ({}));
-        throw new Error(error.message || 'API Error');
+        const message = (error as { message?: string | string[] }).message;
+        const detail = Array.isArray(message) ? message.join(', ') : message;
+        throw new Error(detail || 'API Error');
       }
 
       return retryResponse.json();
@@ -163,7 +165,9 @@ export async function apiFetch<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || 'API Error');
+    const message = (error as { message?: string | string[] }).message;
+    const detail = Array.isArray(message) ? message.join(', ') : message;
+    throw new Error(detail || 'API Error');
   }
 
   return response.json();

@@ -6,6 +6,7 @@ import { USER_ROLE } from '../constants/enums';
 // import { ROUTE_REDEEM, ROUTE_VIEW_SCORE } from '../constants/routes';
 
 import UserCard from './UserCard';
+import ProfileCompletenessCard from './ProfileCompletenessCard';
 // import TitleBar from './ui/TitleBar';
 import PeopleImpactedWithScore from './ui/PeopleImpactedWithScore';
 
@@ -25,6 +26,8 @@ const ReflectionDashboard = ({
 }: ReflectionDashboardProps) => {
   return (
     <div className="mb-8 space-y-6">
+      <ProfileCompletenessCard />
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-700 dark:bg-dark">
           <p className="text-sm text-teal-700 dark:text-teal-300">

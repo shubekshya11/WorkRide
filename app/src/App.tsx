@@ -41,6 +41,7 @@ import { GuestRoute } from './guards/GuestRoute';
 import { ProtectedRoute } from './guards/ProtectedRoute';
 import { AdminRoute } from './guards/AdminRoute';
 import { EmployeeRoute } from './guards/EmployeeRoute';
+import { OnboardingGuard } from './guards/OnboardingGuard';
 
 import { SocketManager } from './components/SocketManager';
 
@@ -105,7 +106,9 @@ const App: React.FC = () => {
                   path={ROUTE_ONBOARDING_CHANGE_PASSWORD}
                   element={
                     <ProtectedRoute>
-                      <ChangePassword />
+                      <OnboardingGuard enforceProfileCompletion={false}>
+                        <ChangePassword />
+                      </OnboardingGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -113,7 +116,9 @@ const App: React.FC = () => {
                   path={ROUTE_ONBOARDING_PROFILE}
                   element={
                     <ProtectedRoute>
-                      <CompleteProfile />
+                      <OnboardingGuard enforceProfileCompletion={false}>
+                        <CompleteProfile />
+                      </OnboardingGuard>
                     </ProtectedRoute>
                   }
                 />

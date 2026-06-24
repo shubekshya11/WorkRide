@@ -10,6 +10,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma';
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma.service';
@@ -109,40 +110,78 @@ export class OnboardingController {
   @Put('profile')
   async updateProfile(
     @Request() req: AuthenticatedRequest,
-    @Body(ValidationPipe) body: UpdateProfileDto,
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+      }),
+    )
+    body: UpdateProfileDto,
   ) {
-    const data: Record<string, unknown> = { ...body };
+    const data: Prisma.UserUpdateInput = {};
 
-    if (body.dateOfBirth) {
+    if (body.fullname !== undefined) data.fullname = body.fullname;
+    if (body.phone !== undefined) data.phone = body.phone;
+    if (body.address !== undefined) data.address = body.address;
+    if (body.profilePicture !== undefined) data.profilePicture = body.profilePicture;
+    if (body.department !== undefined) data.department = body.department;
+    if (body.emergencyContact !== undefined) {
+      data.emergencyContact = body.emergencyContact;
+    }
+    if (body.dateOfBirth !== undefined) {
       data.dateOfBirth = new Date(body.dateOfBirth);
     }
 
-    const user = await this.prisma.user.update({
-      where: { id: req.user.userId },
-      data,
-      select: {
-        id: true,
-        fullname: true,
-        email: true,
-        role: true,
-        phone: true,
-        address: true,
-        profilePicture: true,
-        employeeId: true,
-        department: true,
-        emergencyContact: true,
-        dateOfBirth: true,
-        mustChangePassword: true,
-      },
-    });
+    if (body.employeeId !== undefined) {
+      const existing = await this.prisma.user.findUnique({
+        where: { employeeId: body.employeeId },
+      });
+      if (existing && existing.id !== req.user.userId) {
+        throw new BadRequestException('Employee ID already in use');
+      }
+      data.employeeId = body.employeeId;
+    }
 
-    const profile = this.profileService.calculateCompleteness(user);
+    if (Object.keys(data).length === 0) {
+      throw new BadRequestException('No profile fields to update');
+    }
 
-    return {
-      user,
-      profileCompleteness: profile.percentage,
-      completedFields: profile.completedFields,
-      missingFields: profile.missingFields,
-    };
+    try {
+      const user = await this.prisma.user.update({
+        where: { id: req.user.userId },
+        data,
+        select: {
+          id: true,
+          fullname: true,
+          email: true,
+          role: true,
+          phone: true,
+          address: true,
+          profilePicture: true,
+          employeeId: true,
+          department: true,
+          emergencyContact: true,
+          dateOfBirth: true,
+          mustChangePassword: true,
+        },
+      });
+
+      const profile = this.profileService.calculateCompleteness(user);
+
+      return {
+        user,
+        profileCompleteness: profile.percentage,
+        completedFields: profile.completedFields,
+        missingFields: profile.missingFields,
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new BadRequestException('Employee ID already in use');
+      }
+      throw error;
+    }
   }
 }

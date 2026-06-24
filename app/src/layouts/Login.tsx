@@ -8,13 +8,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import type { LoginFormData, AuthResponse } from '../interfaces/types';
 
 import { API_AUTH_LOGIN } from '../constants/api';
-import { ROUTE_ADMIN_DASHBOARD, ROUTE_ONBOARDING_CHANGE_PASSWORD } from '../constants/routes';
+import {
+  ROUTE_ADMIN_DASHBOARD,
+  ROUTE_ONBOARDING_CHANGE_PASSWORD,
+  ROUTE_ONBOARDING_PROFILE,
+} from '../constants/routes';
 import { USER_ROLE } from '../constants/enums';
 
 import { useAuth } from '../hooks/useAuth';
 
 import { setAuthData } from '../utils/auth';
 import { getFirstNameFromFullName } from '../utils/functions';
+import { getOnboardingStatus } from '../services/onboardingApi';
 
 // Validation schema
 const schema = yup.object().shape({
@@ -72,6 +77,31 @@ const Login = () => {
 
       if (result.mustChangePassword) {
         navigate(ROUTE_ONBOARDING_CHANGE_PASSWORD);
+      } else if (result.user.role?.toLowerCase() !== USER_ROLE.ADMIN) {
+        try {
+          const onboarding = await getOnboardingStatus();
+          if (onboarding.mustChangePassword) {
+            navigate(ROUTE_ONBOARDING_CHANGE_PASSWORD);
+          } else if (onboarding.profileCompleteness < 100) {
+            navigate(ROUTE_ONBOARDING_PROFILE);
+          } else if (redirectAfterLogin) {
+            localStorage.removeItem('redirectAfterLogin');
+            navigate(redirectAfterLogin);
+          } else if (from) {
+            navigate(from);
+          } else {
+            navigate('/');
+          }
+        } catch {
+          if (redirectAfterLogin) {
+            localStorage.removeItem('redirectAfterLogin');
+            navigate(redirectAfterLogin);
+          } else if (from) {
+            navigate(from);
+          } else {
+            navigate('/');
+          }
+        }
       } else if (redirectAfterLogin) {
         localStorage.removeItem('redirectAfterLogin');
         navigate(redirectAfterLogin);

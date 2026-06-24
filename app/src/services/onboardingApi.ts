@@ -12,6 +12,10 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
+function buildApiUrl(endpoint: string): string {
+  return `${API_BASE_URL}${endpoint}`;
+}
+
 export interface OnboardingStatus {
   mustChangePassword: boolean;
   isSuspended: boolean;
@@ -46,10 +50,10 @@ export interface RiderApplicationData {
 }
 
 export const getOnboardingStatus = () =>
-  apiFetch<OnboardingStatus>(API_AUTH_ONBOARDING_STATUS);
+  apiFetch<OnboardingStatus>(buildApiUrl(API_AUTH_ONBOARDING_STATUS));
 
 export const changePassword = (currentPassword: string, newPassword: string) =>
-  apiFetch<{ message: string }>(API_AUTH_CHANGE_PASSWORD, {
+  apiFetch<{ message: string }>(buildApiUrl(API_AUTH_CHANGE_PASSWORD), {
     method: 'POST',
     body: JSON.stringify({ currentPassword, newPassword }),
   });
@@ -60,10 +64,27 @@ export const updateProfile = (data: ProfileUpdateData) =>
     profileCompleteness: number;
     completedFields: string[];
     missingFields: string[];
-  }>(API_AUTH_PROFILE, {
+  }>(buildApiUrl(API_AUTH_PROFILE), {
     method: 'PUT',
-    body: JSON.stringify(data),
+    body: JSON.stringify(prepareProfilePayload(data)),
   });
+
+/** Omit blank fields so the API does not reject or overwrite with empty values. */
+export function prepareProfilePayload(
+  data: ProfileUpdateData,
+): ProfileUpdateData {
+  const payload: ProfileUpdateData = {};
+
+  (Object.entries(data) as [keyof ProfileUpdateData, string | undefined][]).forEach(
+    ([key, value]) => {
+      if (value !== undefined && value !== null && String(value).trim() !== '') {
+        payload[key] = String(value).trim();
+      }
+    },
+  );
+
+  return payload;
+}
 
 export const uploadFile = async (file: File): Promise<string> => {
   const token = getAccessToken();
@@ -87,11 +108,13 @@ export const uploadFile = async (file: File): Promise<string> => {
 };
 
 export const getMyRiderApplication = () =>
-  apiFetch<Record<string, unknown> | null>(API_RIDER_APPLICATIONS_ME);
+  apiFetch<Record<string, unknown> | null>(
+    buildApiUrl(API_RIDER_APPLICATIONS_ME),
+  );
 
 export const submitRiderApplication = (data: RiderApplicationData) =>
   apiFetch<{ message: string; application: Record<string, unknown> }>(
-    API_RIDER_APPLICATIONS,
+    buildApiUrl(API_RIDER_APPLICATIONS),
     {
       method: 'POST',
       body: JSON.stringify(data),

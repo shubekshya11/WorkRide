@@ -6,6 +6,7 @@ import { USER_ROLE } from '../constants/enums';
 import {
   ROUTE_ONBOARDING_CHANGE_PASSWORD,
   ROUTE_ONBOARDING_PROFILE,
+  ROUTE_PROFILE,
   ROUTE_ADMIN_DASHBOARD,
   ROUTE_HOME,
 } from '../constants/routes';
@@ -13,9 +14,14 @@ import { getOnboardingStatus, type OnboardingStatus } from '../services/onboardi
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
+  /** When false, only enforce mandatory password change (not profile completion). */
+  enforceProfileCompletion?: boolean;
 }
 
-export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) => {
+export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({
+  children,
+  enforceProfileCompletion = true,
+}) => {
   const { user } = useAuth();
   const location = useLocation();
   const [status, setStatus] = useState<OnboardingStatus | null>(null);
@@ -52,12 +58,15 @@ export const OnboardingGuard: React.FC<OnboardingGuardProps> = ({ children }) =>
     return <Navigate to={ROUTE_ONBOARDING_CHANGE_PASSWORD} replace />;
   }
 
+  const isViewingProfile = location.pathname === ROUTE_PROFILE;
+
   if (
+    enforceProfileCompletion &&
     !status?.mustChangePassword &&
     status &&
     status.profileCompleteness < 100 &&
     !isOnboardingRoute &&
-    location.pathname !== ROUTE_ONBOARDING_PROFILE
+    !isViewingProfile
   ) {
     return <Navigate to={ROUTE_ONBOARDING_PROFILE} replace />;
   }
