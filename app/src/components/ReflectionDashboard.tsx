@@ -1,9 +1,9 @@
 // import { FaAward } from 'react-icons/fa6';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { ReflectionStats, RideHistory } from '../interfaces/types';
 import { USER_ROLE } from '../constants/enums';
-// import { ROUTE_REDEEM, ROUTE_VIEW_SCORE } from '../constants/routes';
+import { ROUTE_REDEEM } from '../constants/routes';
 
 import UserCard from './UserCard';
 import ProfileCompletenessCard from './ProfileCompletenessCard';
@@ -57,10 +57,35 @@ const ReflectionDashboard = ({
         </p>
       </div>
 
-      {/* Karma points / credit score board — hidden for now */}
-      {/* <div className="relative flex flex-col items-center rounded-2xl border border-amber-300 bg-gradient-to-br from-amber-300 to-amber-100 p-4 shadow-lg ...">
-        ...
-      </div> */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/20">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              {userRole === USER_ROLE.RIDER ? 'Karma points' : 'Credit score'}
+            </p>
+            {userRole === USER_ROLE.RIDER && (
+              <Link
+                to={ROUTE_REDEEM}
+                className="text-xs font-semibold text-amber-600 underline decoration-amber-600/50 hover:text-amber-800 hover:decoration-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
+              >
+                Redeem
+              </Link>
+            )}
+          </div>
+          <p className="mt-1 text-3xl font-semibold text-amber-950 dark:text-amber-100">
+            {userRole === USER_ROLE.RIDER ? stats.karmaPoints : stats.creditScore}
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-700 dark:bg-dark">
+          <p className="text-sm text-teal-700 dark:text-teal-300">
+            People impacted
+          </p>
+          <p className="mt-1 text-3xl font-semibold text-teal-950 dark:text-teal-100">
+            {stats.peopleImpacted}
+          </p>
+        </div>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-700 dark:bg-dark">

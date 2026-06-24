@@ -9,8 +9,8 @@ import { RideHistory, ReflectionStats } from '../interfaces/types';
 
 import { apiFetch } from '../utils/api';
 import { getStoredUser } from '../utils/functions';
-// import { useKarmaPoints } from '../hooks/useKarmaPoints';
-// import { useCreditScore } from '../hooks/useCreditScore';
+import { useKarmaPoints } from '../hooks/useKarmaPoints';
+import { useCreditScore } from '../hooks/useCreditScore';
 
 import Dashboard from '../components/Dashboard';
 import ReflectionDashboard from '../components/ReflectionDashboard';
@@ -26,8 +26,8 @@ const SelfReflection = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [userRole, setUserRole] = useState<USER_ROLE>(USER_ROLE.RIDER);
 
-  // const { karmaPoints } = useKarmaPoints();
-  // const { creditScore } = useCreditScore();
+  const { karmaPoints } = useKarmaPoints();
+  const { creditScore } = useCreditScore();
   const navigate = useNavigate();
 
   // TODO: Refactor ride history fetching to support pagination and infinite scroll
@@ -55,7 +55,7 @@ const SelfReflection = () => {
           const res = await apiFetch<{ rides: RideHistory[] }>(url);
           if (!cancelled) setRides(res.rides);
           break;
-        } catch {
+        } catch (error) {
           if (attempt === retries - 1 && !cancelled) setRides([]);
         }
       }
@@ -73,9 +73,17 @@ const SelfReflection = () => {
     userId: number | null,
   ) => {
     if (userRole === USER_ROLE.RIDER) {
-      return rides.filter(({ rider }) => rider?.id === userId).length;
+      return rides.filter(
+        ({ rider, riderId, createdBy }) =>
+          rider?.id === userId || riderId === userId || createdBy === userId,
+      ).length;
     } else {
-      return rides.filter(({ passengerId }) => passengerId === userId).length;
+      return rides.filter(
+        ({ passengerId, createdBy, passengers }) =>
+          passengerId === userId ||
+          createdBy === userId ||
+          (Array.isArray(passengers) && passengers.some((p) => p.id === userId)),
+      ).length;
     }
   };
 
@@ -83,14 +91,16 @@ const SelfReflection = () => {
     userRole: USER_ROLE,
     userId: number | null,
   ) => {
-    return rides.filter(({ status, rider, passengers }) => {
+    return rides.filter(({ status, rider, riderId, passengerId, createdBy, passengers }) => {
       if (status !== RIDE_STATUS.COMPLETED) return false;
 
       if (userRole === USER_ROLE.RIDER) {
-        return rider?.id === userId;
+        return rider?.id === userId || riderId === userId || createdBy === userId;
       } else {
         return (
-          Array.isArray(passengers) && passengers.some((p) => p.id === userId)
+          passengerId === userId ||
+          createdBy === userId ||
+          (Array.isArray(passengers) && passengers.some((p) => p.id === userId))
         );
       }
     });
@@ -101,8 +111,8 @@ const SelfReflection = () => {
   const stats: ReflectionStats = {
     postedCount: getTotalRideCountByRole(userRole, userId),
     confirmedCount: completedRides.length,
-    karmaPoints: 0,
-    creditScore: 0,
+    karmaPoints: karmaPoints ?? 0,
+    creditScore: creditScore ?? 0,
     distanceTravelled: completedRides.reduce(
       (sum, ride) => sum + (ride.distance ?? 0),
       0,
