@@ -146,7 +146,8 @@ const UserCard: React.FC = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="mt-4 rounded-full border border-dark/20 bg-teal-300 px-8 py-2 font-bold text-teal-900 shadow transition hover:bg-teal-500 dark:bg-teal-400"
+              className="mt-4 rounded-full border border-dark/20 bg-teal-300 px-8 py-2 font-bold shadow transition hover:bg-teal-500 dark:bg-teal-800"
+              style={{ color: 'white' }}
             >
               Logout
             </button>

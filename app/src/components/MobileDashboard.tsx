@@ -167,7 +167,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
                   #{idx + 1}
                 </span>
                 <button
-                  className="inline-flex items-center gap-1 rounded-full border border-teal-300 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-3 py-1 text-xs font-normal text-teal-700 shadow transition-all hover:scale-105 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
+                  className="inline-flex items-center gap-1 rounded-full border border-teal-300 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-3 py-1 text-xs font-normal text-teal-700 shadow transition-all hover:scale-105 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
                   onClick={() => handleRepeatRide(ride)}
                 >
                   <TbRepeat className="inline-block align-middle text-xs" />

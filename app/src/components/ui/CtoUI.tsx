@@ -28,7 +28,7 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
     cta = (
       <Link
         to={ROUTE_LOGIN}
-        className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-100 via-teal-300 to-teal-200 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
+        className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-100 via-teal-300 to-teal-200 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
       >
         Join WorkRide!
       </Link>
@@ -37,7 +37,7 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
     profileGreeting = (
       <Link
         to={ROUTE_PROFILE}
-        className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-400 via-teal-200 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
+        className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-400 via-teal-200 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
       >
         <span className="animate-wave">&#128075;</span>
         Hi, {userName}!
@@ -49,7 +49,7 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
       cta = (
         <Link
           to={ROUTE_ROLE.replace(':roleId', 'rider')}
-          className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
+          className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
         >
           Post a Ride
         </Link>
@@ -58,7 +58,7 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
       cta = (
         <Link
           to={ROUTE_ROLE.replace(':roleId', 'passenger')}
-          className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-dark dark:hover:bg-teal-800"
+          className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
         >
           Find a Ride
         </Link>

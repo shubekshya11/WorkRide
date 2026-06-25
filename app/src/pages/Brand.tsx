@@ -92,7 +92,7 @@ const Brand = () => {
                       e.preventDefault();
                       handleClick(link.link);
                     }}
-                    className={`sticky-navlink ${activeSection === link.link ? 'bg-teal-700 text-light dark:bg-teal-500 dark:text-dark' : 'bg-teal-100/80 text-teal-600 dark:bg-teal-100/20 dark:text-teal-400'}`}
+                    className={`sticky-navlink ${activeSection === link.link ? 'bg-teal-700 text-light dark:bg-teal-500 dark:text-white' : 'bg-teal-100/80 text-teal-600 dark:bg-teal-100/20 dark:text-teal-400'}`}
                   >
                     {link.title}
                   </a>

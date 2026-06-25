@@ -221,7 +221,7 @@ const Leaderboard: React.FC = () => {
         <header className="sticky top-2 z-50 mx-auto flex w-fit items-center justify-center gap-1.5 rounded-full border bg-teal-100 px-1.5 py-2 dark:border-teal-300/20 dark:bg-teal-300/20 md:p-2">
           <button
             onClick={() => setActiveTab('rides')}
-            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-dark dark:hover:bg-teal-800 ${
+            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-white dark:hover:bg-teal-800 ${
               activeTab === 'rides'
                 ? 'bg-gradient-to-tr from-teal-600 to-teal-500 text-white shadow-md'
                 : 'bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-300 dark:bg-teal-900'
@@ -233,7 +233,7 @@ const Leaderboard: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('karma')}
-            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-dark dark:hover:bg-teal-800 ${
+            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-white dark:hover:bg-teal-800 ${
               activeTab === 'karma'
                 ? 'bg-gradient-to-tr from-teal-600 to-teal-500 text-white shadow-md'
                 : 'bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-300 dark:bg-teal-900'
@@ -245,7 +245,7 @@ const Leaderboard: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('feedback')}
-            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-dark dark:hover:bg-teal-800 ${
+            className={`transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 py-2.5 pl-4 pr-5 text-xs font-medium text-teal-700 dark:text-white dark:hover:bg-teal-800 ${
               activeTab === 'feedback'
                 ? 'bg-gradient-to-tr from-teal-600 to-teal-500 text-white shadow-md'
                 : 'bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-300 dark:bg-teal-900'

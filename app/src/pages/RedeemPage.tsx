@@ -151,20 +151,20 @@ const RedeemPage = () => {
         // tweenDuration={1000}
       />
       <main className="relative overflow-x-hidden">
-        <div className="pointer-events-none absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-amber-300 opacity-40 blur-[100px] dark:opacity-20" />
-        <div className="pointer-events-none absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-amber-300 opacity-80 blur-[200px] dark:opacity-40" />
+        <div className="pointer-events-none absolute left-0 -z-10 size-96 -translate-x-1/2 rounded-full bg-teal-300 opacity-40 blur-[100px] dark:opacity-20" />
+        <div className="pointer-events-none absolute right-0 top-1/4 -z-10 size-[36rem] translate-x-1/2 rounded-full bg-teal-300 opacity-80 blur-[200px] dark:opacity-40" />
         <div className="w-full">
           <div className="container mb-4 flex size-full max-w-4xl flex-col items-center justify-center gap-4 text-center md:mb-16">
-            <span className="inline-flex items-center justify-center gap-2 rounded-full bg-amber-100 px-4 py-1 text-xs font-semibold uppercase text-amber-700 sm:text-sm md:text-base">
-              <TbTrophy className="text-lg text-amber-700" />
+            <span className="inline-flex items-center justify-center gap-2 rounded-full bg-teal-100 px-4 py-1 text-xs font-semibold uppercase text-teal-700 sm:text-sm md:text-base">
+              <TbTrophy className="text-lg text-teal-700" />
               Thank You for Your Contributions!
             </span>
 
-            <h1 className="mt-4 text-2xl font-bold capitalize leading-snug text-amber-950 dark:text-amber-500 md:text-4xl md:leading-snug lg:text-5xl lg:leading-snug">
+            <h1 className="mt-4 text-2xl font-bold capitalize leading-snug text-teal-950 dark:text-teal-500 md:text-4xl md:leading-snug lg:text-5xl lg:leading-snug">
               Redeem Your Karma Points
             </h1>
 
-            <p className="max-w-2xl font-body text-xs text-amber-950 dark:text-amber-500 sm:text-sm md:text-base">
+            <p className="max-w-2xl font-body text-xs text-teal-950 dark:text-teal-500 sm:text-sm md:text-base">
               Exchange your hard-earned karma points for exclusive rewards! The
               more you contribute, the more you can claim. Thank you for helping
               others & making a difference!
@@ -174,7 +174,7 @@ const RedeemPage = () => {
             <button
               type="button"
               aria-label="Back to Dashboard"
-              className="hidden rounded-full border border-amber-300 bg-amber-100 px-4 py-1 text-xs font-semibold text-amber-700 shadow hover:bg-amber-200 sm:block md:text-sm"
+              className="hidden rounded-full border border-teal-300 bg-teal-100 px-4 py-1 text-xs font-semibold text-teal-700 shadow hover:bg-teal-200 sm:block md:text-sm"
               onClick={() => navigate(-1)}
             >
               <TbArrowNarrowLeft className="inline-block align-middle" />
@@ -186,7 +186,7 @@ const RedeemPage = () => {
                   <path
                     d="M40,148 A120,120 0 0,1 280,160"
                     fill="none"
-                    stroke="#facc15"
+                    stroke="#2dd4bf"
                     strokeWidth="36"
                     strokeLinecap="round"
                     opacity="0.3"
@@ -194,16 +194,16 @@ const RedeemPage = () => {
                   <path
                     d="M40,160 A120,120 0 0,1 240,64"
                     fill="none"
-                    stroke="#f59e42"
+                    stroke="#14b8a6"
                     strokeWidth="36"
                     strokeLinecap="round"
                   />
                 </svg>
                 <div className="mb-2 text-center">
-                  <span className="text-5xl font-extrabold text-amber-600 dark:text-amber-500">
+                  <span className="text-5xl font-extrabold text-teal-600 dark:text-teal-500">
                     {karmaPoints ?? 0}
                   </span>
-                  <p className="font-semibold text-amber-700 dark:text-amber-400">
+                  <p className="font-semibold text-teal-700 dark:text-teal-400">
                     Karma Points
                   </p>
                 </div>
@@ -211,7 +211,7 @@ const RedeemPage = () => {
             </div>
             <Link
               to={ROUTE_EARN_KARMA}
-              className="hidden rounded-full border border-amber-300 bg-amber-100 px-4 py-1 text-xs font-semibold text-amber-700 shadow hover:bg-amber-200 sm:block md:text-sm"
+              className="hidden rounded-full border border-teal-300 bg-teal-100 px-4 py-1 text-xs font-semibold text-teal-700 shadow hover:bg-teal-200 sm:block md:text-sm"
             >
               How to earn?
             </Link>
@@ -222,7 +222,7 @@ const RedeemPage = () => {
               return (
                 <div
                   key={item.name}
-                  className={`group relative flex flex-col items-start overflow-hidden rounded-2xl border border-amber-300/70 p-5 shadow-sm transition hover:shadow dark:border-amber-300/20 md:p-7`}
+                  className={`group relative flex flex-col items-start overflow-hidden rounded-2xl border border-teal-300/70 p-5 shadow-sm transition hover:shadow dark:border-teal-300/20 md:p-7`}
                 >
                   {item.canRedeem ? (
                     <>
@@ -231,18 +231,18 @@ const RedeemPage = () => {
                     </>
                   ) : (
                     <>
-                      <div className="pointer-events-none absolute left-0 -z-10 size-40 -translate-x-1/2 rounded-full bg-amber-300 opacity-30 blur-[50px]" />
-                      <div className="pointer-events-none absolute right-0 top-1/2 -z-10 size-80 translate-x-1/2 rounded-full bg-amber-300 opacity-60 blur-[100px]" />
+                      <div className="pointer-events-none absolute left-0 -z-10 size-40 -translate-x-1/2 rounded-full bg-teal-300 opacity-30 blur-[50px]" />
+                      <div className="pointer-events-none absolute right-0 top-1/2 -z-10 size-80 translate-x-1/2 rounded-full bg-teal-300 opacity-60 blur-[100px]" />
                     </>
                   )}
 
                   <div className="flex flex-col items-start gap-2">
                     <div className="flex items-center gap-1">
-                      <TbGift className="text-amber-700 dark:text-slate-300" />
-                      <h2 className="text-base font-semibold text-amber-700 dark:text-slate-300">
+                      <TbGift className="text-teal-700 dark:text-slate-300" />
+                      <h2 className="text-base font-semibold text-teal-700 dark:text-slate-300">
                         {item.name}
                       </h2>
-                      <span className="text-xs font-medium text-amber-600 dark:text-slate-300">
+                      <span className="text-xs font-medium text-teal-600 dark:text-slate-300">
                         ({item.points} points)
                       </span>
                     </div>
@@ -252,7 +252,7 @@ const RedeemPage = () => {
                   </p>
 
                   <div className="mb-2 mt-5 w-full">
-                    <div className="mb-1 flex items-center justify-end text-xs font-medium text-amber-700">
+                    <div className="mb-1 flex items-center justify-end text-xs font-medium text-teal-700">
                       {/* <span className="font-bold">0</span> */}
                       <span className="font-bold">{item.points}</span>
                     </div>
@@ -267,7 +267,7 @@ const RedeemPage = () => {
                           left: percent <= 5 ? 0 : `calc(${percent}% - 1.5rem)`,
                         }}
                       >
-                        <span className="rounded-full border border-amber-300 bg-teal-100 px-2 py-0.5 text-xs font-bold text-amber-700 shadow-sm">
+                        <span className="rounded-full border border-teal-300 bg-teal-100 px-2 py-0.5 text-xs font-bold text-teal-700 shadow-sm">
                           {Math.floor(item.progress * item.points)}
                         </span>
                       </div>
@@ -325,9 +325,9 @@ const RedeemPage = () => {
                       </motion.div>
                     )}
                     <button
-                      className={`absolute -bottom-px -right-px overflow-hidden rounded-2xl rounded-bl-none rounded-tr-none border border-amber-300/70 px-6 py-3 text-sm font-bold transition dark:border-amber-300/20 ${
+                      className={`absolute -bottom-px -right-px overflow-hidden rounded-2xl rounded-bl-none rounded-tr-none border border-teal-300/70 px-6 py-3 text-sm font-bold transition dark:border-teal-300/20 ${
                         item.canRedeem
-                          ? 'bg-amber-300 text-amber-900 hover:bg-amber-400'
+                          ? 'bg-teal-300 text-teal-900 hover:bg-teal-400'
                           : 'cursor-not-allowed bg-gray-300 text-gray-800 opacity-80'
                       }`}
                       disabled={!item.canRedeem || isRedeeming}

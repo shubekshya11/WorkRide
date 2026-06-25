@@ -295,7 +295,7 @@ const MapPopup: React.FC<MapPopupProps> = ({
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="transition-300 inline-flex items-center justify-center gap-1 rounded-full border border-dark/10 bg-teal-500 px-4 py-2 text-sm text-white shadow hover:bg-teal-600 dark:bg-teal-400 dark:text-dark dark:hover:bg-teal-300"
+                className="transition-300 inline-flex items-center justify-center gap-1 rounded-full border border-dark/10 bg-teal-500 px-4 py-2 text-sm text-white shadow hover:bg-teal-600 dark:bg-teal-400 dark:text-white dark:hover:bg-teal-300"
               >
                 Confirm
                 <MdDoneAll className="text-lg" />
@@ -304,7 +304,7 @@ const MapPopup: React.FC<MapPopupProps> = ({
               <button
                 type="button"
                 onClick={handleSearch}
-                className={`transition-300 inline-flex items-center justify-center gap-1 rounded-full border border-dark/10 px-4 py-2 text-sm text-white shadow dark:text-dark ${
+                className={`transition-300 inline-flex items-center justify-center gap-1 rounded-full border border-dark/10 px-4 py-2 text-sm text-white shadow dark:text-white ${
                   isLoading
                     ? 'cursor-not-allowed bg-teal-500'
                     : 'bg-teal-500 hover:bg-teal-600 dark:bg-teal-400 dark:hover:bg-teal-300'
