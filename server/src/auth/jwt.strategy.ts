@@ -8,6 +8,7 @@ interface JwtPayload {
   sub: number; // user id
   email: string;
   role?: string;
+  isAdminSession?: boolean; // Indicates if token was generated via admin login
   iat?: number;
   exp?: number;
 }
@@ -17,6 +18,7 @@ export interface JwtUser {
   email: string;
   fullname: string;
   role: string;
+  isAdminSession?: boolean;
 }
 
 @Injectable()
@@ -52,6 +54,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       email: user.email,
       fullname: user.fullname,
       role: user.role,
+      isAdminSession: payload.isAdminSession,
     };
   }
 }

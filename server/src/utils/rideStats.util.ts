@@ -22,6 +22,44 @@ export const DEG_TO_RAD = Math.PI / 180;
 export const MAX_RIDE_PROXIMITY_KM = 3;
 
 /**
+ * Match scoring constants for weighted multi-criteria ride matching
+ */
+
+/**
+ * Maximum distance for distance scoring (in km)
+ * Rides at or beyond this distance receive 0 points
+ */
+export const MAX_DISTANCE_SCORE_KM = 2;
+
+/**
+ * Maximum time difference for time compatibility scoring (in minutes)
+ * Rides with time difference at or beyond this receive 0 points
+ */
+export const MAX_TIME_DIFFERENCE_MINUTES = 30;
+
+/**
+ * Maximum destination distance for destination similarity scoring (in km)
+ * Destinations at or beyond this distance receive 0 points
+ */
+export const MAX_DESTINATION_DISTANCE_KM = 5;
+
+/**
+ * Weight distribution for match scoring (must sum to 1.0)
+ */
+export const MATCH_SCORE_WEIGHTS = {
+  DISTANCE: 0.4,
+  TIME: 0.3,
+  DESTINATION: 0.2,
+  RATING: 0.1,
+} as const;
+
+/**
+ * Minimum and maximum rating values (1-5 star scale)
+ */
+export const MIN_RATING = 1;
+export const MAX_RATING = 5;
+
+/**
  * DEFRA 2024 average car emission factor (kg CO2 per km)
  */
 
@@ -109,4 +147,143 @@ export function calculateETA(distanceKm: number): number {
 
   // Convert to minutes and round to nearest minute
   return Math.round(timeInHours * 60);
+}
+
+/**
+ * Calculates the distance score based on proximity.
+ * Closer rides receive higher scores.
+ *
+ * @param distanceKm - Distance in kilometers
+ * @returns Score from 0 to 100
+ *
+ * @example
+ * distanceScore(0) // Returns 100
+ * distanceScore(1) // Returns 50
+ * distanceScore(2) // Returns 0
+ */
+export function calculateDistanceScore(distanceKm: number): number {
+  if (distanceKm <= 0) return 100;
+  if (distanceKm >= MAX_DISTANCE_SCORE_KM) return 0;
+
+  // Linear scaling: score = 100 * (1 - distance / max_distance)
+  return Math.max(0, Math.min(100, 100 * (1 - distanceKm / MAX_DISTANCE_SCORE_KM)));
+}
+
+/**
+ * Calculates the time compatibility score based on departure time difference.
+ * Exact same departure time receives highest score.
+ *
+ * @param timeDifferenceMinutes - Time difference in minutes
+ * @returns Score from 0 to 100
+ *
+ * @example
+ * timeCompatibilityScore(0) // Returns 100
+ * timeCompatibilityScore(15) // Returns 50
+ * timeCompatibilityScore(30) // Returns 0
+ */
+export function calculateTimeCompatibilityScore(timeDifferenceMinutes: number): number {
+  if (timeDifferenceMinutes <= 0) return 100;
+  if (timeDifferenceMinutes >= MAX_TIME_DIFFERENCE_MINUTES) return 0;
+
+  // Linear scaling: score = 100 * (1 - timeDiff / maxTimeDiff)
+  return Math.max(0, Math.min(100, 100 * (1 - timeDifferenceMinutes / MAX_TIME_DIFFERENCE_MINUTES)));
+}
+
+/**
+ * Calculates the destination similarity score based on distance between destinations.
+ * Closer destinations receive higher scores.
+ *
+ * @param destinationDistanceKm - Distance between destinations in kilometers
+ * @returns Score from 0 to 100
+ *
+ * @example
+ * destinationSimilarityScore(0) // Returns 100
+ * destinationSimilarityScore(2.5) // Returns 50
+ * destinationSimilarityScore(5) // Returns 0
+ */
+export function calculateDestinationSimilarityScore(destinationDistanceKm: number): number {
+  if (destinationDistanceKm <= 0) return 100;
+  if (destinationDistanceKm >= MAX_DESTINATION_DISTANCE_KM) return 0;
+
+  // Linear scaling: score = 100 * (1 - distance / max_distance)
+  return Math.max(0, Math.min(100, 100 * (1 - destinationDistanceKm / MAX_DESTINATION_DISTANCE_KM)));
+}
+
+/**
+ * Converts a 1-5 star rating to a 0-100 score.
+ *
+ * @param rating - Rating from 1 to 5 stars
+ * @returns Score from 0 to 100
+ *
+ * @example
+ * ratingToScore(5) // Returns 100
+ * ratingToScore(3) // Returns 50
+ * ratingToScore(1) // Returns 0
+ */
+export function ratingToScore(rating: number): number {
+  if (rating <= MIN_RATING) return 0;
+  if (rating >= MAX_RATING) return 100;
+
+  // Linear scaling: score = ((rating - min) / (max - min)) * 100
+  return ((rating - MIN_RATING) / (MAX_RATING - MIN_RATING)) * 100;
+}
+
+/**
+ * Calculates the weighted match score for a ride based on multiple criteria.
+ *
+ * @param params - Match scoring parameters
+ * @returns Match score from 0 to 100
+ *
+ * @example
+ * const score = calculateMatchScore({
+ *   distanceKm: 0.5,
+ *   timeDifferenceMinutes: 10,
+ *   destinationDistanceKm: 1,
+ *   driverRating: 4.5
+ * }); // Returns weighted score
+ */
+export interface MatchScoreParams {
+  distanceKm: number;
+  timeDifferenceMinutes: number;
+  destinationDistanceKm: number;
+  driverRating: number;
+}
+
+export function calculateMatchScore(params: MatchScoreParams): number {
+  const {
+    distanceKm,
+    timeDifferenceMinutes,
+    destinationDistanceKm,
+    driverRating,
+  } = params;
+
+  // Calculate individual scores
+  const distanceScore = calculateDistanceScore(distanceKm);
+  const timeScore = calculateTimeCompatibilityScore(timeDifferenceMinutes);
+  const destinationScore = calculateDestinationSimilarityScore(destinationDistanceKm);
+  const ratingScore = ratingToScore(driverRating);
+
+  // Calculate weighted final score
+  const finalScore =
+    distanceScore * MATCH_SCORE_WEIGHTS.DISTANCE +
+    timeScore * MATCH_SCORE_WEIGHTS.TIME +
+    destinationScore * MATCH_SCORE_WEIGHTS.DESTINATION +
+    ratingScore * MATCH_SCORE_WEIGHTS.RATING;
+
+  // Round to 2 decimal places and clamp between 0 and 100
+  return Math.max(0, Math.min(100, Math.round(finalScore * 100) / 100));
+}
+
+/**
+ * Calculates the time difference in minutes between two ISO timestamp strings.
+ *
+ * @param timestamp1 - First timestamp (ISO string)
+ * @param timestamp2 - Second timestamp (ISO string)
+ * @returns Absolute time difference in minutes
+ */
+export function calculateTimeDifferenceMinutes(timestamp1: string, timestamp2: string): number {
+  const date1 = new Date(timestamp1);
+  const date2 = new Date(timestamp2);
+  const diffMs = Math.abs(date1.getTime() - date2.getTime());
+  return diffMs / (1000 * 60); // Convert milliseconds to minutes
 }

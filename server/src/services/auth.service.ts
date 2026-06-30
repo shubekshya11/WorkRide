@@ -31,6 +31,21 @@ export class AuthService {
   }
 
   /**
+   * Generate admin access token with admin session claim
+   * This token can only be used for admin operations
+   */
+  generateAdminAccessToken(userId: number, email: string, role: string): string {
+    return this.jwtService.sign(
+      { sub: userId, email, role, isAdminSession: true },
+      {
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: (this.configService.get<string>('JWT_EXPIRES_IN') ||
+          '1h') as StringValue,
+      },
+    );
+  }
+
+  /**
    * Generate refresh token (long-lived, 30 days) and store in database
    */
   async generateAndStoreRefreshToken(userId: number): Promise<string> {

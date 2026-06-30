@@ -1,4 +1,4 @@
-import { getAccessToken } from '../utils/auth';
+import { getAdminAccessToken } from '../utils/adminAuth';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -101,7 +101,11 @@ export interface LogsResponse {
 
 class AdminApiService {
   private getAuthHeaders() {
-    const token = getAccessToken();
+    const token = getAdminAccessToken();
+    if (!token) {
+      console.error('No admin access token found');
+      throw new Error('No admin access token found. Please login again.');
+    }
     return {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,

@@ -106,12 +106,12 @@ const ReflectionDashboard = ({
           : 'Thanks for choosing shared rides and building community connections.'}
       </div>
 
-      {/* CO₂ reduced — hidden for now */}
-      {/* <div className="relative mt-4 flex flex-col items-center rounded-3xl border border-green-200 bg-gradient-to-br ...">
-        <span className="text-xl font-bold text-green-700">CO₂ Reduced</span>
-        <span className="text-5xl font-extrabold text-green-700">{stats.co2Reduced.toFixed(1)}</span>
-        ...
-      </div> */}
+      {/* CO₂ reduced */}
+      <div className="relative mt-4 flex flex-col items-center rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-100 p-6 dark:border-green-700 dark:from-green-900/20 dark:to-emerald-900/20">
+        <span className="text-xl font-bold text-green-700 dark:text-green-300">CO₂ Reduced</span>
+        <span className="text-5xl font-extrabold text-green-700 dark:text-green-300">{stats.co2Reduced.toFixed(1)} kg</span>
+        <span className="mt-2 text-sm text-green-600 dark:text-green-400">Thanks for helping the environment!</span>
+      </div>
 
       {/* <div>
         <img src={tree1} alt="Trees" className="..." />

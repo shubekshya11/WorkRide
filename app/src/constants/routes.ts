@@ -15,6 +15,7 @@ export const ROUTE_EARN_KARMA = '/earn-karma';
 export const ROUTE_LEADERBOARD = '/leaderboard';
 
 export const ROUTE_ADMIN = '/admin';
+export const ROUTE_ADMIN_LOGIN = '/admin/login';
 export const ROUTE_ADMIN_DASHBOARD = '/admin/dashboard';
 export const ROUTE_ADMIN_USERS = '/admin/users';
 export const ROUTE_ADMIN_RIDES = '/admin/rides';

@@ -195,3 +195,33 @@ export interface UserRedemptionsResponseDto {
   }>;
   total: number;
 }
+
+/**
+ * Response interface for matched rides with scoring metrics
+ */
+export interface MatchedRideResponse {
+  id: number;
+  from: string;
+  fromLat: number | null;
+  fromLng: number | null;
+  to: string;
+  toLat: number | null;
+  toLng: number | null;
+  timestamp: string;
+  role: USER_ROLE;
+  status: string;
+  message: string | null;
+  estimatedTimeOfArrival?: number;
+  distance?: number;
+  rider?: any;
+  passengers?: any[];
+  createdByUser?: any;
+  /** Overall match score (0-100) */
+  matchScore: number;
+  /** Distance between pickup locations in km */
+  distanceKm: number;
+  /** Distance between destinations in km */
+  destinationDistanceKm: number;
+  /** Time difference in departure times in minutes */
+  timeDifferenceMinutes: number;
+}

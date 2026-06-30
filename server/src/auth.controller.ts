@@ -20,6 +20,7 @@ import { AuthService } from './services/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AuthenticatedRequest } from './interfaces/types';
 import { AUTH_CONSTANTS } from './constants/auth.constants';
+import { USER_ROLE } from './constants/enums';
 import {
   LoginDto,
   SignupDto,
@@ -328,5 +329,113 @@ export class AuthController {
       Object.entries(updatedUser).filter(([key]) => key !== 'password'),
     );
     return { message: 'User updated successfully', user: userWithoutPassword };
+  }
+
+  /**
+   * Admin-only login endpoint
+   * Separate from regular user login for enhanced security
+   */
+  @Post('admin/login')
+  async adminLogin(@Body() body: LoginDto) {
+    this.logger.log({
+      level: 'info',
+      message: `Admin login attempt for email: ${body.email}`,
+      tag: 'auth',
+      email: body.email,
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: body.email },
+    });
+    if (!user) {
+      this.logger.log({
+        level: 'warn',
+        message: `Admin login failed for email: ${body.email} - User not found`,
+        tag: 'error',
+        email: body.email,
+      });
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(body.password, user.password);
+    if (!isPasswordValid) {
+      this.logger.log({
+        level: 'warn',
+        message: `Admin login failed for email: ${body.email} - Invalid password`,
+        tag: 'error',
+        email: body.email,
+      });
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    // Verify user has ADMIN role
+    if (user.role?.toLowerCase() !== USER_ROLE.ADMIN) {
+      this.logger.log({
+        level: 'warn',
+        message: `Admin login failed for email: ${body.email} - Not an admin`,
+        tag: 'error',
+        email: body.email,
+        userRole: user.role,
+      });
+      throw new ForbiddenException('Access denied: Admin privileges required');
+    }
+
+    if (user.isSuspended) {
+      throw new ForbiddenException(
+        user.suspendedReason || 'Your account has been suspended',
+      );
+    }
+
+    // Generate JWT tokens with admin session claim
+    const accessToken = this.authService.generateAdminAccessToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+    const refreshToken = await this.authService.generateAndStoreRefreshToken(
+      user.id,
+    );
+
+    // Remove password field from user object for response
+    const userWithoutPassword = Object.fromEntries(
+      Object.entries(user).filter(([key]) => key !== 'password'),
+    );
+
+    this.logger.log({
+      level: 'info',
+      message: `Admin login successful for email: ${body.email}`,
+      tag: 'auth',
+      email: body.email,
+      userId: user.id,
+    });
+
+    return {
+      message: 'Admin login successful',
+      user: userWithoutPassword,
+      accessToken,
+      refreshToken,
+      mustChangePassword: user.mustChangePassword,
+    };
+  }
+
+  /**
+   * Admin-only logout endpoint
+   */
+  @Post('admin/logout')
+  async adminLogout(@Body() body: RefreshTokenDto) {
+    this.logger.log({
+      level: 'info',
+      message: `Admin logout attempt`,
+      tag: 'auth',
+      refreshToken: body.refreshToken,
+    });
+
+    if (!body.refreshToken) {
+      throw new BadRequestException('Refresh token is required for logout');
+    }
+
+    await this.authService.revokeRefreshToken(body.refreshToken);
+
+    return { message: 'Admin logout successful' };
   }
 }

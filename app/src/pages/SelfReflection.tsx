@@ -117,11 +117,10 @@ const SelfReflection = () => {
       (sum, ride) => sum + (ride.distance ?? 0),
       0,
     ),
-    co2Reduced: 0,
-    // co2Reduced: completedRides.reduce(
-    //   (sum, ride) => sum + (ride.co2Saved ?? 0),
-    //   0,
-    // ),
+    co2Reduced: completedRides.reduce(
+      (sum, ride) => sum + (ride.co2Saved ?? 0),
+      0,
+    ),
     peopleImpacted: completedRides.length,
   };
 

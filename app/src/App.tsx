@@ -6,6 +6,7 @@ import useTheme from './hooks/useTheme';
 import RouterToTop from './utils/RouterToTop';
 
 import { AuthProvider } from './contexts/AuthContext';
+import { AdminAuthProvider } from './contexts/AdminAuthContext';
 
 import MainAppLayout from './layouts/MainAppLayout';
 import AdminLayout from './layouts/AdminLayout';
@@ -28,6 +29,7 @@ import RiderApplication from './pages/RiderApplication';
 import ChangePassword from './pages/onboarding/ChangePassword';
 import CompleteProfile from './pages/onboarding/CompleteProfile';
 
+import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminUsers from './pages/admin/Users';
 import AdminRides from './pages/admin/Rides';
@@ -44,6 +46,7 @@ import { EmployeeRoute } from './guards/EmployeeRoute';
 import { OnboardingGuard } from './guards/OnboardingGuard';
 
 import { SocketManager } from './components/SocketManager';
+import AdminRedirect from './components/AdminRedirect';
 
 import {
   ROUTE_404,
@@ -62,6 +65,7 @@ import {
   ROUTE_RIDE_DETAILS,
   ROUTE_LOGS_DASHBOARD,
   ROUTE_ADMIN,
+  ROUTE_ADMIN_LOGIN,
   ROUTE_ADMIN_LOGS,
   ROUTE_ONBOARDING_CHANGE_PASSWORD,
   ROUTE_ONBOARDING_PROFILE,
@@ -77,30 +81,32 @@ const App: React.FC = () => {
     <>
       <Router>
         <AuthProvider>
-          <RideEventProvider>
-            <SocketManager>
-              <RouterToTop />
-              <Routes>
-                <Route
-                  path={ROUTE_ADMIN}
-                  element={
-                    <ProtectedRoute>
+          <AdminAuthProvider>
+            <RideEventProvider>
+              <SocketManager>
+                <RouterToTop />
+                <Routes>
+                  {/* Admin Login Route */}
+                  <Route path={ROUTE_ADMIN_LOGIN} element={<AdminLogin />} />
+
+                  <Route
+                    path={ROUTE_ADMIN}
+                    element={
                       <AdminRoute>
                         <AdminLayout />
                       </AdminRoute>
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="employees" element={<AdminEmployees />} />
-                  <Route path="rider-approvals" element={<AdminRiderApprovals />} />
-                  <Route path="users" element={<AdminUsers />} />
-                  <Route path="rides" element={<AdminRides />} />
-                  <Route path="analytics" element={<AdminAnalytics />} />
-                  <Route path="logs" element={<AdminLogs />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                  <Route index element={<Navigate to="dashboard" replace />} />
-                </Route>
+                    }
+                  >
+                    <Route index element={<AdminRedirect />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="employees" element={<AdminEmployees />} />
+                    <Route path="rider-approvals" element={<AdminRiderApprovals />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="rides" element={<AdminRides />} />
+                    <Route path="analytics" element={<AdminAnalytics />} />
+                    <Route path="logs" element={<AdminLogs />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
 
                 <Route
                   path={ROUTE_ONBOARDING_CHANGE_PASSWORD}
@@ -210,6 +216,7 @@ const App: React.FC = () => {
               </Routes>
             </SocketManager>
           </RideEventProvider>
+        </AdminAuthProvider>
         </AuthProvider>
       </Router>
 
