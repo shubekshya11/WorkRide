@@ -1,35 +1,35 @@
-// import { useEffect, useRef } from 'react';
-// import { gsap } from 'gsap';
-// import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Title from './ui/Title';
-// import rideBuddy from '../assets/ride.webp';
-// import introVideo from '../assets/videos/demo.mp4';
-// import iPhoneMockup from '../assets/mockups/iPhone.webp';
-// import introPoster from '../assets/mockups/imagePoster.webp';
+import rideBuddy from '../assets/ride.webp';
+import introVideo from '../assets/videos/demo.mp4';
+import iPhoneMockup from '../assets/mockups/iPhone.webp';
+import introPoster from '../assets/mockups/imagePoster.webp';
 
-// gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
 const Intro = () => {
-  // const videoContainerRef = useRef(null);
+  const videoContainerRef = useRef(null);
 
-  // useEffect(() => {
-  //   const element = videoContainerRef.current;
+  useEffect(() => {
+    const element = videoContainerRef.current;
 
-  //   gsap.fromTo(
-  //     element,
-  //     { scale: 1 }, // Start scale
-  //     {
-  //       scale: 0.75, // End scale
-  //       scrollTrigger: {
-  //         trigger: element, // Element to watch
-  //         start: 'top center', // Start animation when the element reaches the center of the viewport
-  //         end: '+=500', // End animation after scrolling 500px
-  //         scrub: true, // Smooth scrubbing effect
-  //       },
-  //       ease: 'power1.out', // Smooth easing
-  //     },
-  //   );
-  // }, []);
+    gsap.fromTo(
+      element,
+      { scale: 1 }, // Start scale
+      {
+        scale: 0.75, // End scale
+        scrollTrigger: {
+          trigger: element, // Element to watch
+          start: 'top center', // Start animation when the element reaches the center of the viewport
+          end: '+=500', // End animation after scrolling 500px
+          scrub: true, // Smooth scrubbing effect
+        },
+        ease: 'power1.out', // Smooth easing
+      },
+    );
+  }, []);
 
   return (
     <main className="relative overflow-hidden lg:pb-0">
@@ -57,8 +57,8 @@ const Intro = () => {
             Ride. Enjoy. Save.
           </h3>
         </div>
-        {/* Mobile display (iPhone mockup + demo video) — hidden for now */}
-        {/* <div
+        {/* Mobile display (iPhone mockup + demo video) */}
+        <div
           ref={videoContainerRef}
           className="relative order-1 flex flex-1 justify-center lg:order-2"
         >
@@ -98,7 +98,7 @@ const Intro = () => {
             alt="Ride Buddy"
             className="filter-white dark:filter-dark absolute -top-6 z-10 h-6 w-full animate-floating object-contain"
           />
-        </div> */}
+        </div>
         <div className="order-3 flex flex-1 flex-col items-end justify-end space-y-6 md:space-y-12 lg:space-y-20">
           <h2 className="max-w-sm text-base leading-snug xl:text-xl">
             Our <strong className="bg-teal-200 text-teal-950">Vision</strong> is

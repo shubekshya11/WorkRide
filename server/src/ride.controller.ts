@@ -1358,6 +1358,42 @@ export class RideController {
       typeof distance === 'number' ? estimateCO2FromDistance(distance) : null;
     const peopleImpacted = ride.passengers.length;
 
+    // Award automatic karma points to rider on ride completion
+    let karmaPointsAwarded = 0;
+    if (isRider && distance) {
+      const karmaResult: KarmaCalculationResult =
+        KarmaCalculationService.calculateKarmaPoints({
+          distance: distance,
+          feedbackRating: FEEDBACK_EMOJI.NEUTRAL, // Use neutral for automatic awarding
+        });
+      karmaPointsAwarded = karmaResult.totalPoints;
+
+      await this.prisma.user.update({
+        where: { id: authenticatedUserId },
+        data: { karmaPoints: { increment: karmaPointsAwarded } },
+      });
+
+      // Create karma transaction
+      await this.prisma.karmaTransaction.create({
+        data: {
+          userId: authenticatedUserId,
+          points: karmaPointsAwarded,
+          type: 'earned',
+          reason: `Ride completed automatically | Distance: ${distance}km | Points: ${karmaPointsAwarded}`,
+        },
+      });
+
+      this.logger.log({
+        level: 'info',
+        message: `Automatic karma points awarded to rider on ride completion`,
+        tag: 'ride',
+        userId: authenticatedUserId,
+        rideId,
+        points: karmaPointsAwarded,
+        distance,
+      });
+    }
+
     // Update ALL rides in the same match group to COMPLETED status
     let updatedRides: (Ride & {
       passengers: User[];
