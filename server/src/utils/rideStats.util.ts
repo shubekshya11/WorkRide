@@ -45,12 +45,24 @@ export const MAX_DESTINATION_DISTANCE_KM = 5;
 
 /**
  * Weight distribution for match scoring (must sum to 1.0)
+ * Original: DISTANCE: 0.4, TIME: 0.3, DESTINATION: 0.2, RATING: 0.1
+ * Enhanced: DISTANCE: 0.35, TIME: 0.25, ROUTE_SIMILARITY: 0.25, RATING: 0.15
  */
 export const MATCH_SCORE_WEIGHTS = {
   DISTANCE: 0.4,
   TIME: 0.3,
   DESTINATION: 0.2,
   RATING: 0.1,
+} as const;
+
+/**
+ * Enhanced weight distribution for polyline-based route matching
+ */
+export const ENHANCED_MATCH_SCORE_WEIGHTS = {
+  DISTANCE: 0.35,
+  TIME: 0.25,
+  ROUTE_SIMILARITY: 0.25,
+  RATING: 0.15,
 } as const;
 
 /**
@@ -268,6 +280,66 @@ export function calculateMatchScore(params: MatchScoreParams): number {
     timeScore * MATCH_SCORE_WEIGHTS.TIME +
     destinationScore * MATCH_SCORE_WEIGHTS.DESTINATION +
     ratingScore * MATCH_SCORE_WEIGHTS.RATING;
+
+  // Round to 2 decimal places and clamp between 0 and 100
+  return Math.max(0, Math.min(100, Math.round(finalScore * 100) / 100));
+}
+
+/**
+ * Enhanced match scoring parameters with route similarity
+ */
+export interface EnhancedMatchScoreParams {
+  distanceKm: number;
+  timeDifferenceMinutes: number;
+  routeSimilarityScore: number; // 0-100 from polyline matching
+  driverRating: number;
+  driverDetour?: number;
+  passengerDetour?: number;
+}
+
+/**
+ * Calculates the enhanced weighted match score using route similarity instead of destination distance.
+ * This provides more accurate matching by considering actual route overlap.
+ *
+ * @param params - Enhanced match scoring parameters
+ * @returns Match score from 0 to 100
+ *
+ * @example
+ * const score = calculateEnhancedMatchScore({
+ *   distanceKm: 0.5,
+ *   timeDifferenceMinutes: 10,
+ *   routeSimilarityScore: 75,
+ *   driverRating: 4.5
+ * }); // Returns weighted score with route similarity
+ */
+export function calculateEnhancedMatchScore(params: EnhancedMatchScoreParams): number {
+  const {
+    distanceKm,
+    timeDifferenceMinutes,
+    routeSimilarityScore,
+    driverRating,
+    driverDetour = 0,
+    passengerDetour = 0,
+  } = params;
+
+  // Calculate individual scores
+  const distanceScore = calculateDistanceScore(distanceKm);
+  const timeScore = calculateTimeCompatibilityScore(timeDifferenceMinutes);
+  const routeScore = routeSimilarityScore; // Already 0-100
+  const ratingScore = ratingToScore(driverRating);
+
+  // Apply detour penalty (reduces score based on detour distance)
+  const maxAcceptableDetour = 2; // 2km max acceptable detour
+  const avgDetour = (driverDetour + passengerDetour) / 2;
+  const detourPenalty = Math.min(20, (avgDetour / maxAcceptableDetour) * 20); // Max 20 point penalty
+
+  // Calculate weighted final score with enhanced weights
+  const finalScore =
+    distanceScore * ENHANCED_MATCH_SCORE_WEIGHTS.DISTANCE +
+    timeScore * ENHANCED_MATCH_SCORE_WEIGHTS.TIME +
+    routeScore * ENHANCED_MATCH_SCORE_WEIGHTS.ROUTE_SIMILARITY +
+    ratingScore * ENHANCED_MATCH_SCORE_WEIGHTS.RATING -
+    detourPenalty;
 
   // Round to 2 decimal places and clamp between 0 and 100
   return Math.max(0, Math.min(100, Math.round(finalScore * 100) / 100));

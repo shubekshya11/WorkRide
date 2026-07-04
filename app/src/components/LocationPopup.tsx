@@ -175,7 +175,7 @@ const LocationPopup: React.FC<LocationPopupProps> = ({
                   <p className="text-sm font-medium dark:group-hover:text-dark">
                     NCCS College
                   </p>
-                  <p className="text-xs text-gray-500">Bafal, Kathmandu</p>
+                  <p className="text-xs text-gray-500">Paknajol, Kathmandu</p>
                 </div>
               </button>
             </div>

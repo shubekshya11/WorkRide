@@ -24,6 +24,7 @@ import { Ride, User, Feedback } from 'generated/prisma';
 
 import { PrismaService } from './prisma.service';
 import { KarmaCalculationService } from './services/karma-calculation.service';
+import { RouteMatchingService } from './services/route-matching.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 import { RideGateway } from './rides/rides.gateway';
@@ -55,8 +56,10 @@ import {
   MAX_RIDE_PROXIMITY_KM,
   estimateCO2FromDistance,
   calculateMatchScore,
+  calculateEnhancedMatchScore,
   calculateTimeDifferenceMinutes,
   MatchScoreParams,
+  EnhancedMatchScoreParams,
 } from './utils/rideStats.util';
 import { getNow } from './utils/date.util';
 import { getTimeWindow } from './utils/timeWindow.util';
@@ -193,6 +196,7 @@ export class RideController {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
     private readonly rideGateway: RideGateway,
+    private readonly routeMatchingService: RouteMatchingService,
   ) {}
 
   @Get('/user/:id/karma-points')
@@ -555,6 +559,7 @@ export class RideController {
     @Query('timestamp') timestamp: string,
     @Query('role') role: RIDE_ROLE,
     @Query('useWeightedScoring') useWeightedScoring: string = 'true',
+    @Query('algorithm') algorithm: 'haversine' | 'polyline' | 'hybrid' = 'haversine',
   ) {
     if (!fromLat || !fromLng || !timestamp || !role) {
       this.logger.log({
@@ -578,6 +583,7 @@ export class RideController {
     const toLatNum = toLat ? Number(toLat) : null;
     const toLngNum = toLng ? Number(toLng) : null;
     const enableWeightedScoring = useWeightedScoring === 'true';
+    const usePolylineAlgorithm = algorithm === 'polyline' || algorithm === 'hybrid';
 
     // Use global constant and utility for time window
     const { min: minTime, max: maxTime } = getTimeWindow(
@@ -642,8 +648,8 @@ export class RideController {
 
     // Apply weighted scoring if enabled
     if (enableWeightedScoring) {
-      const scoredRides = filteredRides
-        .map((ride) => {
+      const scoredRides = await Promise.all(
+        filteredRides.map(async (ride) => {
           const distanceKm = ride.distance || 0;
 
           // Calculate time difference
@@ -652,45 +658,113 @@ export class RideController {
             ride.timestamp.toISOString(),
           );
 
-          // Calculate destination distance (if both destinations are available)
-          let destinationDistanceKm = 0;
-          if (
-            toLatNum !== null &&
-            toLngNum !== null &&
-            Number.isFinite(ride.toLat) &&
-            Number.isFinite(ride.toLng)
-          ) {
-            destinationDistanceKm = haversineDistance(
-              toLatNum,
-              toLngNum,
-              ride.toLat as number,
-              ride.toLng as number,
-            );
+          let matchScore: number;
+          let routeSimilarityScore = 0;
+          let routeClassification: 'Excellent' | 'Good' | 'Fair' | 'Poor' = 'Fair';
+          let driverDetour = 0;
+          let passengerDetour = 0;
+
+          // Use polyline-based matching if algorithm is polyline or hybrid
+          if (usePolylineAlgorithm && toLatNum && toLngNum && ride.toLat && ride.toLng) {
+            try {
+              const routeSimilarity = await this.routeMatchingService.calculateRouteSimilarity({
+                driverOrigin: {
+                  lat: fromLatNum,
+                  lng: fromLngNum,
+                },
+                driverDestination: {
+                  lat: toLatNum,
+                  lng: toLngNum,
+                },
+                passengerOrigin: {
+                  lat: ride.fromLat as number,
+                  lng: ride.fromLng as number,
+                },
+                passengerDestination: {
+                  lat: ride.toLat as number,
+                  lng: ride.toLng as number,
+                },
+              });
+
+              routeSimilarityScore = routeSimilarity.similarityScore;
+              routeClassification = routeSimilarity.classification;
+              driverDetour = routeSimilarity.driverDetour;
+              passengerDetour = routeSimilarity.passengerDetour;
+
+              // Calculate enhanced match score with route similarity
+              matchScore = calculateEnhancedMatchScore({
+                distanceKm,
+                timeDifferenceMinutes,
+                routeSimilarityScore,
+                driverRating: 3, // Default to neutral rating
+                driverDetour,
+                passengerDetour,
+              });
+            } catch (error) {
+              // Fallback to Haversine if polyline matching fails
+              this.logger.warn('Polyline matching failed, falling back to Haversine', {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                rideId: ride.id,
+              });
+
+              const destinationDistanceKm = haversineDistance(
+                toLatNum,
+                toLngNum,
+                ride.toLat as number,
+                ride.toLng as number,
+              );
+
+              matchScore = calculateMatchScore({
+                distanceKm,
+                timeDifferenceMinutes,
+                destinationDistanceKm,
+                driverRating: 3,
+              });
+            }
+          } else {
+            // Use Haversine-based matching
+            // Calculate destination distance (if both destinations are available)
+            let destinationDistanceKm = 0;
+            if (
+              toLatNum !== null &&
+              toLngNum !== null &&
+              Number.isFinite(ride.toLat) &&
+              Number.isFinite(ride.toLng)
+            ) {
+              destinationDistanceKm = haversineDistance(
+                toLatNum,
+                toLngNum,
+                ride.toLat as number,
+                ride.toLng as number,
+              );
+            }
+
+            // Calculate match score
+            matchScore = calculateMatchScore({
+              distanceKm,
+              timeDifferenceMinutes,
+              destinationDistanceKm,
+              driverRating: 3, // Default to neutral rating
+            });
           }
-
-          // Get driver rating (default to minimum if not available)
-          // Note: Using a default rating since averageRating field may not exist on User model
-          const driverRating = 3; // Default to neutral rating
-
-          // Calculate match score
-          const matchScore = calculateMatchScore({
-            distanceKm,
-            timeDifferenceMinutes,
-            destinationDistanceKm,
-            driverRating,
-          });
 
           return {
             ...ride,
             matchScore,
+            routeSimilarityScore,
+            routeClassification,
+            driverDetour,
+            passengerDetour,
             distanceKm,
-            destinationDistanceKm,
             timeDifferenceMinutes,
+            algorithm: usePolylineAlgorithm ? 'polyline' : 'haversine',
           };
-        })
-        .sort((a, b) => b.matchScore - a.matchScore); // Sort by highest match score
+        }),
+      );
 
-      return { rides: scoredRides };
+      const sortedRides = scoredRides.sort((a, b) => b.matchScore - a.matchScore);
+
+      return { rides: sortedRides };
     }
 
     // Return original algorithm results without scoring
