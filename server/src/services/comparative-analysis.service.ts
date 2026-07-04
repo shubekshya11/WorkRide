@@ -9,7 +9,6 @@ import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
 import { haversineDistance, calculateMatchScore } from '../utils/rideStats.util';
 import { RouteMatchingService, RouteMatchingParams, MatchingMetrics } from './route-matching.service';
-import { GoogleDirectionsService } from './google-directions.service';
 
 export interface HaversineMatchingResult {
   matchScore: number;
@@ -87,7 +86,6 @@ export interface ComparisonTestParams {
 export class ComparativeAnalysisService {
   constructor(
     private readonly routeMatchingService: RouteMatchingService,
-    private readonly googleDirectionsService: GoogleDirectionsService,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -99,7 +97,12 @@ export class ComparativeAnalysisService {
    * @returns Detailed comparison result with metrics and recommendations
    */
   async compareAlgorithms(params: ComparisonTestParams): Promise<ComparisonResult> {
-    this.logger.info('Starting comparative analysis', { params });
+    this.logger.log({
+      level: 'info',
+      message: 'Starting comparative analysis',
+      tag: 'comparative-analysis',
+      params,
+    });
 
     // Run Haversine matching
     const haversineResult = await this.runHaversineMatching(params);
@@ -116,7 +119,10 @@ export class ComparativeAnalysisService {
     // Generate analysis
     const analysis = this.generateAnalysis(comparison);
 
-    this.logger.info('Comparative analysis completed', {
+    this.logger.log({
+      level: 'info',
+      message: 'Comparative analysis completed',
+      tag: 'comparative-analysis',
       comparison,
       recommendation,
     });
@@ -344,7 +350,12 @@ ${comparison.driverDetour.winner === 'Polyline'
    * @returns Array of comparison results
    */
   async runBatchComparisons(testCases: ComparisonTestParams[]): Promise<ComparisonResult[]> {
-    this.logger.info('Running batch comparative analysis', { testCasesCount: testCases.length });
+    this.logger.log({
+      level: 'info',
+      message: 'Running batch comparative analysis',
+      tag: 'comparative-analysis',
+      testCasesCount: testCases.length,
+    });
 
     const results = await Promise.all(
       testCases.map((params) => this.compareAlgorithms(params))
@@ -353,7 +364,12 @@ ${comparison.driverDetour.winner === 'Polyline'
     // Generate aggregate statistics
     const aggregateStats = this.generateAggregateStatistics(results);
 
-    this.logger.info('Batch comparative analysis completed', aggregateStats);
+    this.logger.log({
+      level: 'info',
+      message: 'Batch comparative analysis completed',
+      tag: 'comparative-analysis',
+      aggregateStats,
+    });
 
     return results;
   }

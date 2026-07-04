@@ -22,9 +22,10 @@ import { PrismaService } from './prisma.service';
 import { AuthService } from './services/auth.service';
 import { ProfileService } from './services/profile.service';
 import { KarmaRedemptionService } from './services/karma-redemption.service';
-import { GoogleDirectionsService } from './services/google-directions.service';
+import { OsrmRoutingService } from './services/osrm-routing.service';
 import { RouteMatchingService } from './services/route-matching.service';
 import { ComparativeAnalysisService } from './services/comparative-analysis.service';
+import { HybridMatchingService } from './services/hybrid-matching.service';
 
 import { RideGateway } from './rides/rides.gateway';
 import { JwtStrategy } from './auth/jwt.strategy';
@@ -66,8 +67,9 @@ import { winstonLoggerConfig } from './logger.config';
     AuthService,
     ProfileService,
     KarmaRedemptionService,
-    GoogleDirectionsService,
+    OsrmRoutingService,
     RouteMatchingService,
+    HybridMatchingService,
     ComparativeAnalysisService,
     RideGateway,
     JwtStrategy,

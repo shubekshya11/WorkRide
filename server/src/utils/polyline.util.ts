@@ -1,6 +1,5 @@
 /**
- * Polyline encoding/decoding utilities for Google Maps
- * Based on Google's polyline encoding algorithm
+ * Polyline encoding/decoding utilities (compatible with OSRM route geometry).
  * 
  * @see https://developers.google.com/maps/documentation/utilities/polylinealgorithm
  */

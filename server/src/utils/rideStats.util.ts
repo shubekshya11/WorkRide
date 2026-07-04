@@ -6,6 +6,8 @@
  * @see https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2024
  */
 
+import { calculateDetourPenalty } from './detour.util';
+
 /**
  * The radius of the Earth in kilometers (mean radius)
  */
@@ -327,13 +329,8 @@ export function calculateEnhancedMatchScore(params: EnhancedMatchScoreParams): n
   const timeScore = calculateTimeCompatibilityScore(timeDifferenceMinutes);
   const routeScore = routeSimilarityScore; // Already 0-100
   const ratingScore = ratingToScore(driverRating);
+  const detourPenalty = calculateDetourPenalty(driverDetour, passengerDetour);
 
-  // Apply detour penalty (reduces score based on detour distance)
-  const maxAcceptableDetour = 2; // 2km max acceptable detour
-  const avgDetour = (driverDetour + passengerDetour) / 2;
-  const detourPenalty = Math.min(20, (avgDetour / maxAcceptableDetour) * 20); // Max 20 point penalty
-
-  // Calculate weighted final score with enhanced weights
   const finalScore =
     distanceScore * ENHANCED_MATCH_SCORE_WEIGHTS.DISTANCE +
     timeScore * ENHANCED_MATCH_SCORE_WEIGHTS.TIME +

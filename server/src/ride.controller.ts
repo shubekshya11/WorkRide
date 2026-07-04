@@ -24,7 +24,7 @@ import { Ride, User, Feedback } from 'generated/prisma';
 
 import { PrismaService } from './prisma.service';
 import { KarmaCalculationService } from './services/karma-calculation.service';
-import { RouteMatchingService } from './services/route-matching.service';
+import { HybridMatchingService } from './services/hybrid-matching.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 import { RideGateway } from './rides/rides.gateway';
@@ -55,11 +55,6 @@ import {
   haversineDistance,
   MAX_RIDE_PROXIMITY_KM,
   estimateCO2FromDistance,
-  calculateMatchScore,
-  calculateEnhancedMatchScore,
-  calculateTimeDifferenceMinutes,
-  MatchScoreParams,
-  EnhancedMatchScoreParams,
 } from './utils/rideStats.util';
 import { getNow } from './utils/date.util';
 import { getTimeWindow } from './utils/timeWindow.util';
@@ -196,7 +191,7 @@ export class RideController {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
     private readonly rideGateway: RideGateway,
-    private readonly routeMatchingService: RouteMatchingService,
+    private readonly hybridMatchingService: HybridMatchingService,
   ) {}
 
   @Get('/user/:id/karma-points')
@@ -524,31 +519,22 @@ export class RideController {
   }
 
   /**
-   * Enhanced Ride Matching Algorithm with Weighted Scoring
+   * Ride Matching — Haversine filter + Weighted Multi-Criteria scoring
    *
-   * Builds on the original algorithm by adding optional weighted multi-criteria scoring.
+   * Stage 1 (always):
+   * - Opposite role only, active rides, time window, Haversine proximity (≤3 km)
    *
-   * Original Algorithm (always applied):
-   * - Only matches rides with the opposite role
-   * - Only includes rides within +/- 30 minutes of the requested time
-   * - Only includes rides within 2km of the requested location (using Haversine distance)
+   * Stage 2 (useWeightedScoring=true):
+   * - Haversine weighted score for all candidates:
+   *   Distance (40%) + Time (30%) + Destination similarity (20%) + Rating (10%)
    *
-   * Enhanced Algorithm (applied when useWeightedScoring=true):
-   * - Calculates a weighted match score (0-100) based on:
-   *   * Distance Score (40%): Closer rides receive higher scores
-   *   * Time Compatibility Score (30%): Exact same departure time receives highest score
-   *   * Destination Similarity Score (20%): Closer destinations receive higher scores
-   *   * Driver Rating Score (10%): Higher rated drivers receive higher scores
-   * - Returns results sorted by highest Match Score
+   * Hybrid mode (algorithm=hybrid, default when weighted scoring is on):
+   * - Top 5 candidates from stage 2 receive OSRM route similarity (OpenStreetMap)
+   * - Final score: 0.35×Distance + 0.25×Time + 0.25×RouteSimilarity + 0.15×Rating − DetourPenalty
+   * - Falls back to Haversine score if OSRM routing is unavailable
    *
-   * @param fromLat Latitude of the user's requested location
-   * @param fromLng Longitude of the user's requested location
-   * @param toLat Latitude of the user's destination location (optional for enhanced scoring)
-   * @param toLng Longitude of the user's destination location (optional for enhanced scoring)
-   * @param timestamp Requested ride time (ISO string)
-   * @param role User's role ("rider" or "passenger")
-   * @param useWeightedScoring Enable weighted multi-criteria scoring (default: true)
-   * @returns Array of matched rides with optional scoring metrics
+   * algorithm=haversine — original weighted scoring only
+   * algorithm=polyline  — polyline scoring for all filtered candidates
    */
   @Get('match')
   async matchRides(
@@ -559,7 +545,7 @@ export class RideController {
     @Query('timestamp') timestamp: string,
     @Query('role') role: RIDE_ROLE,
     @Query('useWeightedScoring') useWeightedScoring: string = 'true',
-    @Query('algorithm') algorithm: 'haversine' | 'polyline' | 'hybrid' = 'haversine',
+    @Query('algorithm') algorithm: 'haversine' | 'polyline' | 'hybrid' = 'hybrid',
   ) {
     if (!fromLat || !fromLng || !timestamp || !role) {
       this.logger.log({
@@ -583,7 +569,7 @@ export class RideController {
     const toLatNum = toLat ? Number(toLat) : null;
     const toLngNum = toLng ? Number(toLng) : null;
     const enableWeightedScoring = useWeightedScoring === 'true';
-    const usePolylineAlgorithm = algorithm === 'polyline' || algorithm === 'hybrid';
+    const matchingAlgorithm = enableWeightedScoring ? algorithm : 'haversine';
 
     // Use global constant and utility for time window
     const { min: minTime, max: maxTime } = getTimeWindow(
@@ -610,13 +596,14 @@ export class RideController {
 
     this.logger.log({
       level: 'info',
-      message: `Matching rides for role=${role}, location=(${fromLat},${fromLng}), time=${timestamp}, weighted=${enableWeightedScoring}`,
+      message: `Matching rides for role=${role}, location=(${fromLat},${fromLng}), time=${timestamp}, weighted=${enableWeightedScoring}, algorithm=${matchingAlgorithm}`,
       tag: 'ride',
       role,
       fromLat,
       fromLng,
       timestamp,
       enableWeightedScoring,
+      algorithm: matchingAlgorithm,
       matchedCount: rides.length,
     });
 
@@ -646,125 +633,21 @@ export class RideController {
       return false;
     });
 
-    // Apply weighted scoring if enabled
     if (enableWeightedScoring) {
-      const scoredRides = await Promise.all(
-        filteredRides.map(async (ride) => {
-          const distanceKm = ride.distance || 0;
-
-          // Calculate time difference
-          const timeDifferenceMinutes = calculateTimeDifferenceMinutes(
-            timestamp,
-            ride.timestamp.toISOString(),
-          );
-
-          let matchScore: number;
-          let routeSimilarityScore = 0;
-          let routeClassification: 'Excellent' | 'Good' | 'Fair' | 'Poor' = 'Fair';
-          let driverDetour = 0;
-          let passengerDetour = 0;
-
-          // Use polyline-based matching if algorithm is polyline or hybrid
-          if (usePolylineAlgorithm && toLatNum && toLngNum && ride.toLat && ride.toLng) {
-            try {
-              const routeSimilarity = await this.routeMatchingService.calculateRouteSimilarity({
-                driverOrigin: {
-                  lat: fromLatNum,
-                  lng: fromLngNum,
-                },
-                driverDestination: {
-                  lat: toLatNum,
-                  lng: toLngNum,
-                },
-                passengerOrigin: {
-                  lat: ride.fromLat as number,
-                  lng: ride.fromLng as number,
-                },
-                passengerDestination: {
-                  lat: ride.toLat as number,
-                  lng: ride.toLng as number,
-                },
-              });
-
-              routeSimilarityScore = routeSimilarity.similarityScore;
-              routeClassification = routeSimilarity.classification;
-              driverDetour = routeSimilarity.driverDetour;
-              passengerDetour = routeSimilarity.passengerDetour;
-
-              // Calculate enhanced match score with route similarity
-              matchScore = calculateEnhancedMatchScore({
-                distanceKm,
-                timeDifferenceMinutes,
-                routeSimilarityScore,
-                driverRating: 3, // Default to neutral rating
-                driverDetour,
-                passengerDetour,
-              });
-            } catch (error) {
-              // Fallback to Haversine if polyline matching fails
-              this.logger.warn('Polyline matching failed, falling back to Haversine', {
-                error: error instanceof Error ? error.message : 'Unknown error',
-                rideId: ride.id,
-              });
-
-              const destinationDistanceKm = haversineDistance(
-                toLatNum,
-                toLngNum,
-                ride.toLat as number,
-                ride.toLng as number,
-              );
-
-              matchScore = calculateMatchScore({
-                distanceKm,
-                timeDifferenceMinutes,
-                destinationDistanceKm,
-                driverRating: 3,
-              });
-            }
-          } else {
-            // Use Haversine-based matching
-            // Calculate destination distance (if both destinations are available)
-            let destinationDistanceKm = 0;
-            if (
-              toLatNum !== null &&
-              toLngNum !== null &&
-              Number.isFinite(ride.toLat) &&
-              Number.isFinite(ride.toLng)
-            ) {
-              destinationDistanceKm = haversineDistance(
-                toLatNum,
-                toLngNum,
-                ride.toLat as number,
-                ride.toLng as number,
-              );
-            }
-
-            // Calculate match score
-            matchScore = calculateMatchScore({
-              distanceKm,
-              timeDifferenceMinutes,
-              destinationDistanceKm,
-              driverRating: 3, // Default to neutral rating
-            });
-          }
-
-          return {
-            ...ride,
-            matchScore,
-            routeSimilarityScore,
-            routeClassification,
-            driverDetour,
-            passengerDetour,
-            distanceKm,
-            timeDifferenceMinutes,
-            algorithm: usePolylineAlgorithm ? 'polyline' : 'haversine',
-          };
-        }),
+      const scoredRides = await this.hybridMatchingService.scoreCandidates(
+        filteredRides,
+        {
+          fromLat: fromLatNum,
+          fromLng: fromLngNum,
+          toLat: toLatNum,
+          toLng: toLngNum,
+          timestamp,
+          role: normalizedRole,
+          algorithm: matchingAlgorithm,
+        },
       );
 
-      const sortedRides = scoredRides.sort((a, b) => b.matchScore - a.matchScore);
-
-      return { rides: sortedRides };
+      return { rides: scoredRides };
     }
 
     // Return original algorithm results without scoring
