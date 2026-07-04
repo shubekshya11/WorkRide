@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, ReactNode } from 'react';
 
-import { RIDE_STATUS, CUSTOM_EVENTS, USER_ROLE } from '../constants/enums';
+import { RIDE_STATUS, CUSTOM_EVENTS, RIDE_ROLE } from '../constants/enums';
 
 import { getUserId } from '../utils/auth';
 import { getFeedbackKey } from '../utils/functions';
@@ -203,7 +203,7 @@ export const SocketManager = ({ children }: SocketManagerProps) => {
 
           dispatchRideStatusChanged({
             status: RIDE_STATUS.COMPLETED,
-            ride: { ...ride, role: ride.role as USER_ROLE },
+            ride: { ...ride, role: ride.role as RIDE_ROLE },
           });
 
           navigate(

@@ -132,11 +132,10 @@ export function estimateCO2FromDistance(
  * Calculates the estimated time of arrival (ETA) based on distance and transport mode.
  *
  * @param distanceKm - Distance to travel in kilometers
- * @param role - User role (rider or passenger) to determine transport mode
  * @returns Estimated time of arrival in minutes, rounded to nearest minute
  *
  * @example
- * const eta = calculateETA(5, USER_ROLE.RIDER); // Returns ETA for a 5km bike ride
+ * const eta = calculateETA(5); // Returns ETA for a 5km bike ride
  */
 export function calculateETA(distanceKm: number): number {
   // Always use bike speed since rider will be on bike

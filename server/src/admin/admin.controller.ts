@@ -65,11 +65,11 @@ export class AdminController {
       this.prisma.ride.count({ where: { status: RIDE_STATUS.CANCELLED } }),
     ]);
 
-    const ridersCount = await this.prisma.user.count({
-      where: { role: 'RIDER' },
+    const ridersCount = await this.prisma.riderApplication.count({
+      where: { status: 'APPROVED_RIDER' },
     });
     const passengersCount = await this.prisma.user.count({
-      where: { role: 'PASSENGER' },
+      where: { role: 'USER' },
     });
 
     this.logger.log({
@@ -924,7 +924,7 @@ export class AdminController {
         fullname: dto.fullname,
         email: dto.email,
         password: hashedPassword,
-        role: 'PASSENGER',
+        role: 'USER',
         employeeId: dto.employeeId,
         department: dto.department,
         phone: dto.phone,
@@ -1112,10 +1112,6 @@ export class AdminController {
             },
           },
         },
-      }),
-      this.prisma.user.update({
-        where: { id: application.userId },
-        data: { role: 'RIDER' },
       }),
     ]);
 

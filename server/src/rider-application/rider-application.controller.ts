@@ -68,10 +68,6 @@ export class RiderApplicationController {
       throw new BadRequestException('Admins cannot apply as riders');
     }
 
-    if (user.role.toLowerCase() === USER_ROLE.RIDER) {
-      throw new BadRequestException('You are already an approved rider');
-    }
-
     if (user.riderApplication?.status === 'PENDING_RIDER_APPROVAL') {
       throw new ConflictException('You already have a pending application');
     }

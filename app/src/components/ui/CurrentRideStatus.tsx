@@ -1,6 +1,6 @@
 import React from 'react';
 import { TbAlarm, TbCircleDashed, TbMapPin, TbCheck } from 'react-icons/tb';
-import { USER_ROLE, RIDE_STATUS } from '../../constants/enums';
+import { RIDE_ROLE, RIDE_STATUS } from '../../constants/enums';
 import { RideExpiryTimer } from './RideExpiryTimer';
 
 interface CurrentRideStatusProps {
@@ -9,7 +9,7 @@ interface CurrentRideStatusProps {
     to: string;
     message: string;
     time?: string;
-    role: USER_ROLE;
+    role: RIDE_ROLE;
     expiryTime: number;
     originalDuration?: number;
     status: RIDE_STATUS;

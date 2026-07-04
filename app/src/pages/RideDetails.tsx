@@ -24,7 +24,7 @@ import {
   RideStatusChangedEventDetail,
 } from '../interfaces/types';
 
-import { CUSTOM_EVENTS, RIDE_STATUS, USER_ROLE } from '../constants/enums';
+import { CUSTOM_EVENTS, RIDE_STATUS, RIDE_ROLE } from '../constants/enums';
 
 import { apiFetch } from '../utils/api';
 import { getUserData } from '../utils/auth';
@@ -44,7 +44,7 @@ const MatchedUserCard: React.FC<{ matchedUser: UserDetails }> = ({
 }) => (
   <div className="!mt-0 space-y-3 rounded-xl border border-teal-200/50 bg-teal-50 p-4 shadow-sm dark:border-teal-300/30 dark:bg-teal-950">
     <h4 className="inline-flex w-fit items-center justify-center gap-2 text-lg font-medium capitalize text-teal-500 dark:text-teal-300">
-      {matchedUser.role.toLowerCase() === USER_ROLE.RIDER ? (
+      {matchedUser.role.toLowerCase() === RIDE_ROLE.RIDER ? (
         <MdOutlineDirectionsBike />
       ) : (
         <FaWalking />
@@ -358,13 +358,13 @@ const RideDetails: React.FC = () => {
           {rideDetails.estimatedTimeOfArrival && (
             <div className="rounded-xl bg-teal-100 p-3 dark:bg-teal-900">
               <div className="flex items-center gap-2">
-                {role === USER_ROLE.RIDER ? (
+                {role === RIDE_ROLE.RIDER ? (
                   <MdOutlineDirectionsBike className="text-lg text-teal-500" />
                 ) : (
                   <FaWalking className="text-lg text-teal-500" />
                 )}
                 <span className="text-base text-dark dark:text-light">
-                  {role === USER_ROLE.RIDER
+                  {role === RIDE_ROLE.RIDER
                     ? `Time to reach passenger's location (by bike)`
                     : `Rider's estimated arrival time (by bike)`}
                   : ~{rideDetails.estimatedTimeOfArrival} minutes
@@ -437,7 +437,7 @@ const RideDetails: React.FC = () => {
           <p className="fixed bottom-6 left-1/2 z-50 w-max -translate-x-1/2 rounded-full border border-amber-300/50 bg-gradient-to-br from-amber-300 via-amber-50 to-amber-200 py-1 pl-1.5 pr-2 text-xxs font-medium text-amber-900 backdrop-blur-sm transition-all duration-300 sm:py-2 sm:pl-3 sm:pr-4 sm:text-sm">
             <TbInfoCircleFilled className="mr-2 inline-block scale-150 text-sm text-amber-700 sm:text-base" />
             {`Complete this feedback form to redeem your ${
-              rideDetails.role === USER_ROLE.RIDER
+              rideDetails.role === RIDE_ROLE.RIDER
                 ? 'karma points.'
                 : 'credit score.'
             }`}

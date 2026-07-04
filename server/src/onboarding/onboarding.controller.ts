@@ -54,9 +54,7 @@ export class OnboardingController {
       riderApplicationStatus: user.riderApplication?.status ?? null,
       rejectionReason: user.riderApplication?.rejectionReason ?? null,
       role: user.role,
-      isApprovedRider:
-        user.role.toLowerCase() === USER_ROLE.RIDER &&
-        user.riderApplication?.status === 'APPROVED_RIDER',
+      isApprovedRider: user.riderApplication?.status === 'APPROVED_RIDER',
     };
   }
 

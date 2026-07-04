@@ -144,7 +144,7 @@ const AdminEmployees: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      {emp.riderApplication?.status || emp.role === 'RIDER' ? emp.riderApplication?.status || 'APPROVED_RIDER' : '—'}
+                      {emp.riderApplication?.status || '—'}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       {emp.mustChangePassword ? (

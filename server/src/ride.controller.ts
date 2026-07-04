@@ -32,6 +32,7 @@ import { UpdateRideDto } from './dto/update-ride.dto';
 
 import {
   USER_ROLE,
+  RIDE_ROLE,
   RIDE_STATUS,
   FEEDBACK_EMOJI,
   RIDE_MATCH_WINDOW_MINUTES,
@@ -402,7 +403,7 @@ export class RideController {
     });
 
     // Update user scores based on their role
-    if (body.role === USER_ROLE.RIDER) {
+    if (body.role === RIDE_ROLE.RIDER) {
       // Update rider's karma points
       await this.prisma.user.update({
         where: { id: authenticatedUserId },
@@ -437,7 +438,7 @@ export class RideController {
           formula: karmaResult.formula,
         },
       });
-    } else if (body.role === USER_ROLE.PASSENGER) {
+    } else if (body.role === RIDE_ROLE.PASSENGER) {
       // Update passenger's credit score
       await this.prisma.user.update({
         where: { id: authenticatedUserId },
@@ -470,10 +471,10 @@ export class RideController {
     });
 
     const riderFeedback = allFeedback.find(
-      (f) => (f.role as USER_ROLE) === USER_ROLE.RIDER,
+      (f) => (f.role as RIDE_ROLE) === RIDE_ROLE.RIDER,
     );
     const passengerFeedback = allFeedback.find(
-      (f) => (f.role as USER_ROLE) === USER_ROLE.PASSENGER,
+      (f) => (f.role as RIDE_ROLE) === RIDE_ROLE.PASSENGER,
     );
 
     // Since ride is already completed, check if both users have now submitted feedback
@@ -492,7 +493,7 @@ export class RideController {
         rideId: feedback.rideId,
         fromUserId: feedback.fromUserId,
         toUserId: feedback.toUserId,
-        role: feedback.role as USER_ROLE,
+        role: feedback.role as RIDE_ROLE,
         emoji: feedback.emoji as FEEDBACK_EMOJI,
         comment: feedback.comment,
       } as FeedbackDto,
@@ -552,7 +553,7 @@ export class RideController {
     @Query('toLat') toLat: string,
     @Query('toLng') toLng: string,
     @Query('timestamp') timestamp: string,
-    @Query('role') role: USER_ROLE,
+    @Query('role') role: RIDE_ROLE,
     @Query('useWeightedScoring') useWeightedScoring: string = 'true',
   ) {
     if (!fromLat || !fromLng || !timestamp || !role) {
@@ -587,9 +588,9 @@ export class RideController {
     // Always match rides with the OPPOSITE role
     const normalizedRole = role;
     const oppositeRole =
-      normalizedRole === USER_ROLE.RIDER
-        ? USER_ROLE.PASSENGER
-        : USER_ROLE.RIDER;
+      normalizedRole === RIDE_ROLE.RIDER
+        ? RIDE_ROLE.PASSENGER
+        : RIDE_ROLE.RIDER;
     const rides = await this.prisma.ride.findMany({
       where: {
         role: oppositeRole,
@@ -732,27 +733,12 @@ export class RideController {
       throw new NotFoundException('User not found');
     }
     // Case-insensitive role check
-    if (user.role.toLowerCase() !== body.role.toLowerCase()) {
-      this.logger.log({
-        level: 'warn',
-        message: `Ride creation failed: Role mismatch for userId=${authenticatedUserId} (userRole='${user.role}', requestedRole='${body.role}')`,
-        tag: 'ride',
-        userId: authenticatedUserId,
-        userRole: user.role,
-        requestedRole: body.role,
-      });
-      throw new BadRequestException(
-        `Role mismatch: You're a '${user.role}', not a '${body.role}'.`,
-      );
-    }
-
-    if (body.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
+    if (body.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase()) {
       const riderApplication = await this.prisma.riderApplication.findUnique({
         where: { userId: authenticatedUserId },
       });
 
       if (
-        user.role.toLowerCase() !== USER_ROLE.RIDER.toLowerCase() ||
         riderApplication?.status !== 'APPROVED_RIDER'
       ) {
         throw new BadRequestException(
@@ -788,10 +774,10 @@ export class RideController {
     let riderId: number | null = null;
     let passengerId: number | null = null;
 
-    if (body.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
+    if (body.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase()) {
       riderId = authenticatedUserId;
       passengerId = null;
-    } else if (body.role.toLowerCase() === USER_ROLE.PASSENGER.toLowerCase()) {
+    } else if (body.role.toLowerCase() === RIDE_ROLE.PASSENGER.toLowerCase()) {
       riderId = null;
       passengerId = authenticatedUserId;
     }
@@ -1026,9 +1012,9 @@ export class RideController {
     if (userId) {
       const currentUserId = Number(userId);
       if (currentUserId === ride.riderId) {
-        userRole = USER_ROLE.RIDER;
+        userRole = RIDE_ROLE.RIDER;
       } else if (currentUserId === ride.passengerId) {
-        userRole = USER_ROLE.PASSENGER;
+        userRole = RIDE_ROLE.PASSENGER;
       }
     }
 
@@ -1183,7 +1169,7 @@ export class RideController {
     let updatedPassengerId: number;
 
     // Determine the target ride and user IDs based on the current ride's role
-    if (currentRide.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
+    if (currentRide.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase()) {
       // Current ride is by a rider, confirming a passenger's ride
       if (!body.passengerId || !body.passengerRideId) {
         throw new BadRequestException(

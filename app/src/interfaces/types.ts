@@ -1,4 +1,4 @@
-import { RIDE_STATUS, USER_ROLE, LEADERBOARD_RANK } from '../constants/enums';
+import { RIDE_STATUS, USER_ROLE, RIDE_ROLE, LEADERBOARD_RANK } from '../constants/enums';
 
 export interface Person {
   id: number;
@@ -12,7 +12,7 @@ export interface RideFormData {
   from: string;
   to: string;
   message: string;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   fromLat?: number;
   fromLng?: number;
   toLat?: number;
@@ -30,7 +30,7 @@ export interface RideFormData {
 }
 
 export interface AvailableListProps {
-  role: USER_ROLE;
+  role: RIDE_ROLE;
 }
 
 export interface FaqItemProps {
@@ -60,7 +60,7 @@ export interface MessagePopupProps {
 
 export interface RideBarProps {
   fromHome?: boolean;
-  role?: USER_ROLE;
+  role?: RIDE_ROLE;
 }
 
 export interface SideNavProps {
@@ -138,7 +138,7 @@ export interface RideHistory {
   from: string;
   to: string;
   message?: string;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   fromLat?: number;
   fromLng?: number;
   toLat?: number;
@@ -190,7 +190,7 @@ export interface AverageScoreResult {
 export interface RideStatusChangedEventDetail {
   status: RIDE_STATUS;
   ride?: RideFormData;
-  role?: USER_ROLE;
+  role?: RIDE_ROLE;
 }
 
 // Karma Redemption Interfaces
@@ -235,7 +235,7 @@ export interface LeaderboardUser {
   id: number;
   name: string;
   profilePicture?: string;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   value: number;
   rank: number;
   badge?: LEADERBOARD_RANK;

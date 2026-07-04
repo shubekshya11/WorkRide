@@ -13,7 +13,7 @@ import {
 import { MdOutlineLeaderboard } from 'react-icons/md';
 
 import { LeaderboardUser } from '../interfaces/types';
-import { USER_ROLE, LEADERBOARD_RANK } from '../constants/enums';
+import { RIDE_ROLE, LEADERBOARD_RANK } from '../constants/enums';
 
 import CtoUI from '../components/ui/CtoUI';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -27,7 +27,7 @@ const MOCK_USERS = [
     name: 'John Doe',
     profilePicture:
       'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: USER_ROLE.RIDER,
+    role: RIDE_ROLE.RIDER,
     rides: 45,
     karma: 2450,
     feedback: 4.8,
@@ -37,7 +37,7 @@ const MOCK_USERS = [
     name: 'Jane Smith',
     profilePicture:
       'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: USER_ROLE.RIDER,
+    role: RIDE_ROLE.RIDER,
     rides: 38,
     karma: 1950,
     feedback: 4.9,
@@ -47,7 +47,7 @@ const MOCK_USERS = [
     name: 'Mike Johnson',
     profilePicture:
       'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: USER_ROLE.RIDER,
+    role: RIDE_ROLE.RIDER,
     rides: 32,
     karma: 2180,
     feedback: 4.6,
@@ -57,7 +57,7 @@ const MOCK_USERS = [
     name: 'Sarah Wilson',
     profilePicture:
       'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: USER_ROLE.RIDER,
+    role: RIDE_ROLE.RIDER,
     rides: 28,
     karma: 1820,
     feedback: 4.7,
@@ -67,7 +67,7 @@ const MOCK_USERS = [
     name: 'David Brown',
     profilePicture:
       'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: USER_ROLE.RIDER,
+    role: RIDE_ROLE.RIDER,
     rides: 24,
     karma: 1650,
     feedback: 4.5,

@@ -4,7 +4,7 @@ import {
   RideFormData as BaseRideFormData,
   UserDetails,
 } from '../interfaces/types';
-import { USER_ROLE } from '../constants/enums';
+import { RIDE_ROLE } from '../constants/enums';
 
 type RideFormData = BaseRideFormData & {
   createdByUser: UserDetails; // Always required - the person who created the ride
@@ -14,7 +14,7 @@ type RideFormData = BaseRideFormData & {
 
 interface RideResultsListProps {
   ridesFound: RideFormData[];
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   handleConfirm: (ride: RideFormData) => void;
   handleReject: (ride: RideFormData) => void;
 }
@@ -33,7 +33,7 @@ const RideResultsList: React.FC<RideResultsListProps> = ({
         id="modal-title"
         className="pb-4 text-lg font-medium text-teal-500 dark:text-teal-300 md:text-xl"
       >
-        Available {role === USER_ROLE.RIDER ? 'Passengers' : 'Rides'}{' '}
+        Available {role === RIDE_ROLE.RIDER ? 'Passengers' : 'Rides'}{' '}
         {ridesFound.length === 0 ? '' : `(${ridesFound.length})`}
       </h3>
 
@@ -104,7 +104,7 @@ const RideResultsList: React.FC<RideResultsListProps> = ({
                 {ride.distance === 0 ? (
                   <>
                     <span className="text-xs text-dark dark:text-light">
-                      {role === USER_ROLE.RIDER
+                      {role === RIDE_ROLE.RIDER
                         ? "You're at the passenger's location"
                         : 'Rider is at your location'}
                     </span>
@@ -115,7 +115,7 @@ const RideResultsList: React.FC<RideResultsListProps> = ({
                 ) : (
                   <>
                     <span className="text-xs text-dark dark:text-light">
-                      {role === USER_ROLE.RIDER
+                      {role === RIDE_ROLE.RIDER
                         ? `Time to reach the location`
                         : `Rider will reach your location in`}{' '}
                       ~

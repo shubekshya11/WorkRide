@@ -3,12 +3,17 @@
  * Use this for type safety and to avoid hardcoded role strings.
  *
  * Example usage:
- *   role === USER_ROLE.RIDER
+ *   role === USER_ROLE.ADMIN
  */
 export enum USER_ROLE {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
+// Action-based roles for ride creation (not stored in user table)
+export enum RIDE_ROLE {
   RIDER = 'rider',
   PASSENGER = 'passenger',
-  ADMIN = 'admin',
 }
 
 export enum RIDER_APPROVAL_STATUS {
@@ -17,7 +22,7 @@ export enum RIDER_APPROVAL_STATUS {
   REJECTED_RIDER = 'REJECTED_RIDER',
 }
 
-export const USER_ROLES = [USER_ROLE.RIDER, USER_ROLE.PASSENGER, USER_ROLE.ADMIN] as const;
+export const USER_ROLES = [USER_ROLE.USER, USER_ROLE.ADMIN] as const;
 export type UserRoleType = (typeof USER_ROLES)[number];
 
 /**

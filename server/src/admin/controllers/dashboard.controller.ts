@@ -30,11 +30,11 @@ export class DashboardController {
       this.prisma.ride.count({ where: { status: 'CANCELLED' } }),
     ]);
 
-    const ridersCount = await this.prisma.user.count({
-      where: { role: 'RIDER' },
+    const ridersCount = await this.prisma.riderApplication.count({
+      where: { status: 'APPROVED_RIDER' },
     });
     const passengersCount = await this.prisma.user.count({
-      where: { role: 'PASSENGER' },
+      where: { role: 'USER' },
     });
 
     this.logger.log({

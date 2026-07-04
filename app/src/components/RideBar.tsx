@@ -12,6 +12,7 @@ import { TbUser, TbMapPin, TbBrandHipchat } from 'react-icons/tb';
 
 import {
   USER_ROLE,
+  RIDE_ROLE,
   RIDE_STATUS,
   LS_RIDE_FORM_DATA_KEY,
 } from '../constants/enums';
@@ -105,7 +106,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
 
   // Store last search params for 'search again' feature
   const [lastSearchParams, setLastSearchParams] = useState<{
-    role: USER_ROLE;
+    role: RIDE_ROLE;
     fromLat?: number;
     fromLng?: number;
     to?: string;
@@ -144,7 +145,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
   };
 
   const fetchAvailableRides = async (
-    role: USER_ROLE,
+    role: RIDE_ROLE,
     fromLat?: number,
     fromLng?: number,
     timestamp?: string,
@@ -255,11 +256,11 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
 
         if (availableRides.length > 0) {
           toast.success(
-            `Your ride route has been submitted! It will be visible to ${role === USER_ROLE.RIDER ? 'passengers' : 'riders'} sharing the same route.`,
+            `Your ride route has been submitted! It will be visible to ${role === RIDE_ROLE.RIDER ? 'passengers' : 'riders'} sharing the same route.`,
           );
         } else {
           toast.info(
-            `Your ride route has been submitted! Currently, no ${role === USER_ROLE.RIDER ? 'passengers' : 'riders'} are sharing the same route.`,
+            `Your ride route has been submitted! Currently, no ${role === RIDE_ROLE.RIDER ? 'passengers' : 'riders'} are sharing the same route.`,
           );
         }
 
@@ -273,7 +274,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
           from: '',
           to: '',
           message: '',
-          role: role as USER_ROLE,
+          role: role as RIDE_ROLE,
         });
       }, 2000);
     } catch (err) {
@@ -445,7 +446,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
           riderRideId?: number;
         } = {};
 
-        if (user.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
+        if (role === RIDE_ROLE.RIDER) {
           // Current user is a rider, confirming a passenger's ride
           // The ride being confirmed should have a passengerId set (passenger who created it)
           const passengerUserId = ride.passengerId || ride.createdBy;
@@ -655,7 +656,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
         from: currentRide.from,
         to: currentRide.to,
         message: currentRide.message,
-        role: currentRide.role,
+        role: (currentRide.role as string) as RIDE_ROLE,
         time: new Date(currentRide.timestamp).toLocaleString(),
         expiryTime: currentRide.remainingTimeSeconds,
         originalDuration: currentRide.expiryTimeSeconds,
@@ -671,16 +672,16 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
 
     // Ensure role is either "rider" or "passenger"
     const roleValue =
-      lastSearchParams.role === USER_ROLE.RIDER ||
-      lastSearchParams.role === USER_ROLE.PASSENGER
+      lastSearchParams.role === RIDE_ROLE.RIDER ||
+      lastSearchParams.role === RIDE_ROLE.PASSENGER
         ? lastSearchParams.role
-        : USER_ROLE.RIDER;
+        : RIDE_ROLE.RIDER;
 
     return {
       from: lastSearchParams.from || '-',
       to: lastSearchParams.to || '-',
       message: lastSearchParams.message || '-',
-      role: roleValue as USER_ROLE,
+      role: roleValue as RIDE_ROLE,
       time: lastSearchParams.timestamp
         ? new Date(lastSearchParams.timestamp).toLocaleString()
         : '',
@@ -730,7 +731,7 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
       <FullScreenModal onClose={() => setIsLoading(false)}>
         <SearchingRide
           heading={
-            role === USER_ROLE.RIDER
+            role === RIDE_ROLE.RIDER
               ? 'Searching for passengers'
               : 'Searching for riders'
           }
@@ -871,19 +872,19 @@ const RideBar: React.FC<RideBarProps> = ({ fromHome = false, role }) => {
                   }
                 >
               }
-              role={role as USER_ROLE}
+              role={role as RIDE_ROLE}
               handleConfirm={handleConfirm}
               handleReject={handleReject}
             />
           ) : (
             <SearchingRide
               heading={
-                role === USER_ROLE.RIDER
+                role === RIDE_ROLE.RIDER
                   ? 'Searching for passengers'
                   : 'Searching for riders'
               }
               message={
-                role === USER_ROLE.RIDER
+                role === RIDE_ROLE.RIDER
                   ? 'Your ride is posted. We are looking for passengers sharing the same route. Check back soon or use Search Again.'
                   : 'Your request is posted. We are looking for riders sharing the same route. Check back soon or use Search Again.'
               }

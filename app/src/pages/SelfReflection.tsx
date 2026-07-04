@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { RIDE_STATUS, USER_ROLE } from '../constants/enums';
+import { RIDE_STATUS, RIDE_ROLE } from '../constants/enums';
 import { ROUTE_LOGIN } from '../constants/routes';
 import { API_RIDES_HISTORY } from '../constants/api';
 
@@ -24,7 +24,6 @@ import ReflectionDashboard from '../components/ReflectionDashboard';
 const SelfReflection = () => {
   const [rides, setRides] = useState<RideHistory[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
-  const [userRole, setUserRole] = useState<USER_ROLE>(USER_ROLE.RIDER);
 
   const { karmaPoints } = useKarmaPoints();
   const { creditScore } = useCreditScore();
@@ -39,12 +38,6 @@ const SelfReflection = () => {
       return;
     }
     setUserId(storedUser.id ?? null);
-    // Normalize role comparison - database stores "Rider"/"Passenger", enum uses "rider"/"passenger"
-    const normalizedRole =
-      storedUser.role?.toLowerCase() === 'rider'
-        ? USER_ROLE.RIDER
-        : USER_ROLE.PASSENGER;
-    setUserRole(normalizedRole);
 
     const fetchWithRetry = async (retries = 3) => {
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -68,48 +61,35 @@ const SelfReflection = () => {
     };
   }, [navigate]);
 
-  const getTotalRideCountByRole = (
-    userRole: USER_ROLE,
-    userId: number | null,
-  ) => {
-    if (userRole === USER_ROLE.RIDER) {
-      return rides.filter(
-        ({ rider, riderId, createdBy }) =>
-          rider?.id === userId || riderId === userId || createdBy === userId,
-      ).length;
-    } else {
-      return rides.filter(
-        ({ passengerId, createdBy, passengers }) =>
-          passengerId === userId ||
-          createdBy === userId ||
-          (Array.isArray(passengers) && passengers.some((p) => p.id === userId)),
-      ).length;
-    }
+  const getTotalRideCount = (userId: number | null) => {
+    return rides.filter(
+      ({ rider, riderId, createdBy, passengerId, passengers }) =>
+        rider?.id === userId ||
+        riderId === userId ||
+        createdBy === userId ||
+        passengerId === userId ||
+        (Array.isArray(passengers) && passengers.some((p) => p.id === userId)),
+    ).length;
   };
 
-  const getUserCompletedRides = (
-    userRole: USER_ROLE,
-    userId: number | null,
-  ) => {
+  const getUserCompletedRides = (userId: number | null) => {
     return rides.filter(({ status, rider, riderId, passengerId, createdBy, passengers }) => {
       if (status !== RIDE_STATUS.COMPLETED) return false;
 
-      if (userRole === USER_ROLE.RIDER) {
-        return rider?.id === userId || riderId === userId || createdBy === userId;
-      } else {
-        return (
-          passengerId === userId ||
-          createdBy === userId ||
-          (Array.isArray(passengers) && passengers.some((p) => p.id === userId))
-        );
-      }
+      return (
+        rider?.id === userId ||
+        riderId === userId ||
+        createdBy === userId ||
+        passengerId === userId ||
+        (Array.isArray(passengers) && passengers.some((p) => p.id === userId))
+      );
     });
   };
 
-  const completedRides = getUserCompletedRides(userRole, userId);
+  const completedRides = getUserCompletedRides(userId);
 
   const stats: ReflectionStats = {
-    postedCount: getTotalRideCountByRole(userRole, userId),
+    postedCount: getTotalRideCount(userId),
     confirmedCount: completedRides.length,
     karmaPoints: karmaPoints ?? 0,
     creditScore: creditScore ?? 0,
@@ -135,7 +115,7 @@ const SelfReflection = () => {
           stats={stats}
           completedRides={completedRides}
           currentUserId={userId || 0}
-          userRole={userRole}
+          userRole={RIDE_ROLE.RIDER}
         />
         {/* TODO: Update Dashboard to support incremental loading (infinite scroll) */}
         <Dashboard rides={rides} />

@@ -13,7 +13,7 @@ import {
 } from 'react-icons/tb';
 import { MdOutlineShareLocation } from 'react-icons/md';
 
-import { USER_ROLE, LS_RIDE_FORM_DATA_KEY } from '../constants/enums';
+import { RIDE_ROLE, LS_RIDE_FORM_DATA_KEY } from '../constants/enums';
 
 import { ROUTE_HOME, ROUTE_ROLE } from '../constants/routes';
 
@@ -83,13 +83,13 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
     // show the opposite role based on the ride's role
     if (ride.createdBy === currentUserId) {
       if (
-        ride.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase() &&
+        ride.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase() &&
         ride.passengers &&
         ride.passengers.length > 0
       ) {
         return ride.passengers[0];
       } else if (
-        ride.role.toLowerCase() === USER_ROLE.PASSENGER.toLowerCase() &&
+        ride.role.toLowerCase() === RIDE_ROLE.PASSENGER.toLowerCase() &&
         ride.rider
       ) {
         return ride.rider;
@@ -99,36 +99,33 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
     return null;
   };
 
-  /**
-   * Determines the column label based on what type of users will be displayed.
-   * If current user is a rider, the column will show passengers.
-   * If current user is a passenger, the column will show riders.
-   */
-  const getUsersColumnLabel = () => {
-    if (!currentUser) return '';
+  const getMatchLabel = (ride: RideHistory) => {
+    if (!currentUser) return 'Match';
 
-    // The column should show what type of user will be displayed
-    // If current user is a rider, we'll show passengers, and vice versa
-    if (currentUser.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
-      return USER_ROLE.PASSENGER;
-    } else if (
-      currentUser.role.toLowerCase() === USER_ROLE.PASSENGER.toLowerCase()
-    ) {
-      return USER_ROLE.RIDER;
+    const currentUserId = currentUser.id;
+    if (ride.riderId === currentUserId) return RIDE_ROLE.PASSENGER;
+    if (ride.passengerId === currentUserId) return RIDE_ROLE.RIDER;
+    if (ride.createdBy === currentUserId) {
+      if (ride.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase()) {
+        return RIDE_ROLE.PASSENGER;
+      }
+      if (ride.role.toLowerCase() === RIDE_ROLE.PASSENGER.toLowerCase()) {
+        return RIDE_ROLE.RIDER;
+      }
     }
 
     return 'Match';
   };
 
   const handleRepeatRide = (ride: RideHistory) => {
-    if (!currentUser || !currentUser.role) {
+    if (!currentUser) {
       console.error('User information is missing or incomplete.');
       toast.error('User information is missing. Please log in again.');
 
       return;
     }
 
-    const userRole = currentUser.role as USER_ROLE;
+    const rideRole = ride.role as RIDE_ROLE;
 
     const rideData = {
       from: ride.from,
@@ -138,7 +135,7 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
       toLat: ride.toLat,
       toLng: ride.toLng,
       message: ride.message || '',
-      role: userRole,
+      role: rideRole,
     };
 
     try {
@@ -151,7 +148,7 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
       return;
     }
 
-    navigate(getRoleRoute(userRole));
+    navigate(getRoleRoute(rideRole));
   };
 
   return (
@@ -182,7 +179,7 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
             </th>
             <th className="px-4 py-3 text-left font-semibold capitalize text-teal-700 dark:text-teal-200">
               <TbUser className="inline-block align-middle text-sm xl:text-base" />{' '}
-              {getUsersColumnLabel()}
+              Match
             </th>
             <th className="px-4 py-3 text-left font-semibold text-teal-700 dark:text-teal-200">
               <TbRoute className="inline-block align-middle text-sm xl:text-base" />{' '}
@@ -236,11 +233,16 @@ const Dashboard: React.FC<DashboardProps> = ({ rides }) => {
                     <StatusBadge status={ride.status} />
                   </td>
                   <td className="px-4 py-3">
-                    <UserDisplay
-                      user={getUserToDisplay(ride)}
-                      showProfilePicture={true}
-                      className="max-w-40 text-xs"
-                    />
+                    <div className="space-y-1">
+                      <span className="text-xxs capitalize text-teal-600 dark:text-teal-300">
+                        {getMatchLabel(ride)}
+                      </span>
+                      <UserDisplay
+                        user={getUserToDisplay(ride)}
+                        showProfilePicture={true}
+                        className="max-w-40 text-xs"
+                      />
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     {ride.distance ? ride.distance.toFixed(1) : '-'}

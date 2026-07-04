@@ -18,7 +18,7 @@ import NoRideFound from './ui/NoRideFound';
 import UserDisplay from './ui/UserDisplay';
 import StatusBadge from './ui/StatusBadge';
 
-import { USER_ROLE, LS_RIDE_FORM_DATA_KEY } from '../constants/enums';
+import { RIDE_ROLE, LS_RIDE_FORM_DATA_KEY } from '../constants/enums';
 import { ROUTE_HOME, ROUTE_ROLE } from '../constants/routes';
 
 import { RideHistory } from '../interfaces/types';
@@ -74,13 +74,13 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
     // show the opposite role based on the ride's role
     if (ride.createdBy === currentUserId) {
       if (
-        ride.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase() &&
+        ride.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase() &&
         ride.passengers &&
         ride.passengers.length > 0
       ) {
         return ride.passengers[0];
       } else if (
-        ride.role.toLowerCase() === USER_ROLE.PASSENGER.toLowerCase() &&
+        ride.role.toLowerCase() === RIDE_ROLE.PASSENGER.toLowerCase() &&
         ride.rider
       ) {
         return ride.rider;
@@ -90,31 +90,32 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
     return null;
   };
 
-  /**
-   * Determines the label for the user section based on what type of users will be displayed.
-   */
-  const getUsersLabel = () => {
+  const getMatchLabel = (ride: RideHistory) => {
     if (!currentUser) return 'Match';
 
-    if (currentUser.role.toLowerCase() === USER_ROLE.RIDER.toLowerCase()) {
-      return USER_ROLE.PASSENGER;
-    } else if (
-      currentUser.role.toLowerCase() === USER_ROLE.PASSENGER.toLowerCase()
-    ) {
-      return USER_ROLE.RIDER;
+    const currentUserId = currentUser.id;
+    if (ride.riderId === currentUserId) return RIDE_ROLE.PASSENGER;
+    if (ride.passengerId === currentUserId) return RIDE_ROLE.RIDER;
+    if (ride.createdBy === currentUserId) {
+      if (ride.role.toLowerCase() === RIDE_ROLE.RIDER.toLowerCase()) {
+        return RIDE_ROLE.PASSENGER;
+      }
+      if (ride.role.toLowerCase() === RIDE_ROLE.PASSENGER.toLowerCase()) {
+        return RIDE_ROLE.RIDER;
+      }
     }
 
     return 'Match';
   };
 
   const handleRepeatRide = (ride: RideHistory) => {
-    if (!currentUser || !currentUser.role) {
+    if (!currentUser) {
       console.error('User information is missing or incomplete.');
       toast.error('User information is missing. Please log in again.');
       return;
     }
 
-    const userRole = currentUser.role as USER_ROLE;
+    const rideRole = ride.role as RIDE_ROLE;
 
     const rideData = {
       from: ride.from,
@@ -124,7 +125,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
       toLat: ride.toLat,
       toLng: ride.toLng,
       message: ride.message || '',
-      role: userRole,
+      role: rideRole,
     };
 
     try {
@@ -137,7 +138,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
       return;
     }
 
-    navigate(getRoleRoute(userRole));
+    navigate(getRoleRoute(rideRole));
   };
 
   return (
@@ -224,7 +225,7 @@ const MobileDashboard: React.FC<MobileDashboardProps> = ({ rides }) => {
                 <div className="flex items-center gap-2">
                   <TbUser className="text-xs text-teal-400" />
                   <span className="text-xs font-semibold capitalize text-teal-700 dark:text-teal-200">
-                    {getUsersLabel()}:
+                    {getMatchLabel(ride)}:
                   </span>
                 </div>
                 <UserDisplay

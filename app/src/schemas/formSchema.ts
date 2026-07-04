@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { USER_ROLE } from '../constants/enums';
+import { RIDE_ROLE } from '../constants/enums';
 
 export const rideFormSchema = yup.object().shape({
   from: yup.string().required('From location is required*'),
@@ -7,6 +7,6 @@ export const rideFormSchema = yup.object().shape({
   message: yup.string().required('Message is required*'),
   role: yup
     .string()
-    .oneOf(Object.values(USER_ROLE))
+    .oneOf(Object.values(RIDE_ROLE))
     .required('Role is required*'),
 });

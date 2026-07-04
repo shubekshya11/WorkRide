@@ -19,7 +19,7 @@ model User {
   fullname          String
   email             String             @unique
   password          String
-  role              UserRole           @default(PASSENGER)
+  role              UserRole           @default(USER)
   phone             String?
   address           String?
   profilePicture    String?
@@ -50,8 +50,7 @@ model User {
 }
 
 enum UserRole {
-  RIDER
-  PASSENGER
+  USER
   ADMIN
 }
 

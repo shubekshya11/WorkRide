@@ -197,8 +197,6 @@ const AdminUsers: React.FC = () => {
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         user.role === 'admin'
                           ? 'bg-purple-100 text-purple-700'
-                          : user.role === 'rider'
-                          ? 'bg-blue-100 text-blue-700'
                           : 'bg-green-100 text-green-700'
                       }`}>
                         {user.role}

@@ -1,5 +1,6 @@
 import {
   USER_ROLE,
+  RIDE_ROLE,
   DISTANCE_TIER,
   FEEDBACK_EMOJI,
   REDEMPTION_STATUS,
@@ -25,7 +26,7 @@ export interface RideDto {
   toLat?: number;
   toLng?: number;
   message?: string;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   createdBy: number;
   estimatedTimeOfArrival?: number;
   timestamp?: string;
@@ -57,7 +58,7 @@ export interface FeedbackDto {
   rideId: number;
   fromUserId: number;
   toUserId: number;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   emoji: FEEDBACK_EMOJI;
   comment?: string;
 }
@@ -80,7 +81,7 @@ export interface FeedbackRecord {
   rideId: number;
   fromUserId: number;
   toUserId: number;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   emoji: FEEDBACK_EMOJI;
   comment?: string | null;
   createdAt: Date;
@@ -208,7 +209,7 @@ export interface MatchedRideResponse {
   toLat: number | null;
   toLng: number | null;
   timestamp: string;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   status: string;
   message: string | null;
   estimatedTimeOfArrival?: number;

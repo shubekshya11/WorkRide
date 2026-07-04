@@ -1,7 +1,6 @@
 // TODO: responsive on mobile, tablet and accessibility check
 
 import { Link } from 'react-router-dom';
-import { USER_ROLE } from '../../constants/enums';
 import { ROUTE_LOGIN, ROUTE_PROFILE, ROUTE_ROLE } from '../../constants/routes';
 
 import saveEarth from '../../assets/vector/save-earth-2.svg';
@@ -44,26 +43,22 @@ const CtoUI = ({ title, description }: CtoUIProps) => {
       </Link>
     );
 
-    const role = (user.role || '').toLowerCase();
-    if (role === USER_ROLE.RIDER) {
-      cta = (
+    cta = (
+      <div className="flex flex-wrap items-center gap-2">
         <Link
           to={ROUTE_ROLE.replace(':roleId', 'rider')}
           className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
         >
           Post a Ride
         </Link>
-      );
-    } else if (role === USER_ROLE.PASSENGER) {
-      cta = (
         <Link
           to={ROUTE_ROLE.replace(':roleId', 'passenger')}
           className="transition-150 inline-flex items-center gap-1 rounded-full border border-teal-400 bg-gradient-to-tr from-teal-200 via-teal-100 to-teal-400 px-6 py-2.5 text-sm font-normal text-dark hover:scale-110 hover:bg-gradient-to-tl hover:from-teal-400 hover:to-teal-300 dark:border-teal-700 dark:bg-teal-900 dark:text-white dark:hover:bg-teal-800"
         >
           Find a Ride
         </Link>
-      );
-    }
+      </div>
+    );
   }
 
   return (

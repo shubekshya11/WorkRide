@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 import { ReflectionStats, RideHistory } from '../interfaces/types';
-import { USER_ROLE } from '../constants/enums';
+import { RIDE_ROLE } from '../constants/enums';
 import { ROUTE_REDEEM } from '../constants/routes';
 
 import UserCard from './UserCard';
@@ -16,7 +16,7 @@ interface ReflectionDashboardProps {
   stats: ReflectionStats;
   completedRides: RideHistory[];
   currentUserId: number;
-  userRole: USER_ROLE;
+  userRole: RIDE_ROLE;
 }
 
 const ReflectionDashboard = ({
@@ -40,7 +40,7 @@ const ReflectionDashboard = ({
 
         <div className="rounded-xl border border-teal-200 bg-teal-50 p-4 dark:border-teal-700 dark:bg-dark">
           <p className="text-sm text-teal-700 dark:text-teal-300">
-            {userRole === USER_ROLE.RIDER ? 'Rides posted' : 'Rides requested'}
+            {userRole === RIDE_ROLE.RIDER ? 'Rides posted' : 'Rides requested'}
           </p>
           <p className="mt-1 text-3xl font-semibold text-teal-950 dark:text-teal-100">
             {stats.postedCount}
@@ -61,9 +61,9 @@ const ReflectionDashboard = ({
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/20">
           <div className="flex items-center justify-between">
             <p className="text-sm text-amber-800 dark:text-amber-300">
-              {userRole === USER_ROLE.RIDER ? 'Karma points' : 'Credit score'}
+              {userRole === RIDE_ROLE.RIDER ? 'Karma points' : 'Credit score'}
             </p>
-            {userRole === USER_ROLE.RIDER && (
+            {userRole === RIDE_ROLE.RIDER && (
               <Link
                 to={ROUTE_REDEEM}
                 className="text-xs font-semibold text-amber-600 underline decoration-amber-600/50 hover:text-amber-800 hover:decoration-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
@@ -73,7 +73,7 @@ const ReflectionDashboard = ({
             )}
           </div>
           <p className="mt-1 text-3xl font-semibold text-amber-950 dark:text-amber-100">
-            {userRole === USER_ROLE.RIDER ? stats.karmaPoints : stats.creditScore}
+            {userRole === RIDE_ROLE.RIDER ? stats.karmaPoints : stats.creditScore}
           </p>
         </div>
 
@@ -101,7 +101,7 @@ const ReflectionDashboard = ({
       </div>
 
       <div className="rounded-xl border border-teal-200 bg-teal-200/40 px-4 py-3 text-center text-sm text-teal-800">
-        {userRole === USER_ROLE.RIDER
+        {userRole === RIDE_ROLE.RIDER
           ? 'Thanks for sharing rides and helping your co-workers commute.'
           : 'Thanks for choosing shared rides and building community connections.'}
       </div>

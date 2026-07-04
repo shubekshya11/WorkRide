@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { RideFormData } from '../interfaces/types';
 
 import {
-  USER_ROLE,
+  RIDE_ROLE,
   RIDE_STATUS,
   EMOJI_OPTIONS,
   FEEDBACK_EMOJI,
@@ -30,7 +30,7 @@ interface FeedbackSubmissionData {
   rideId: number;
   fromUserId: number;
   toUserId: number;
-  role: USER_ROLE;
+  role: RIDE_ROLE;
   emoji: FEEDBACK_EMOJI;
   comment?: string;
 }
@@ -86,8 +86,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   const userRole =
     user?.id === Number(rideDetails.riderId)
-      ? USER_ROLE.RIDER
-      : USER_ROLE.PASSENGER;
+      ? RIDE_ROLE.RIDER
+      : RIDE_ROLE.PASSENGER;
 
   // Determine who receives the feedback
   let toUserId: number = 0;
@@ -113,7 +113,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
   }
 
   const getRoleBasedPrompt = () => {
-    if (userRole === USER_ROLE.RIDER) {
+    if (userRole === RIDE_ROLE.RIDER) {
       return {
         title: 'Share your experience!',
         description:
@@ -249,7 +249,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         // Show success message and navigate
         toast.success('Thank you for your feedback!');
         toast.info(
-          `You earned ${response.pointsAwarded} ${userRole === USER_ROLE.RIDER ? 'karma' : 'credit score'} points!`,
+          `You earned ${response.pointsAwarded} ${userRole === RIDE_ROLE.RIDER ? 'karma' : 'credit score'} points!`,
           { autoClose: 10000 }, // 10 seconds
         );
 
@@ -260,7 +260,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
         toast.success('Thank you for your feedback!');
         toast.info(
-          `You earned ${response.pointsAwarded} ${userRole === USER_ROLE.RIDER ? 'karma' : 'credit score'} points!`,
+          `You earned ${response.pointsAwarded} ${userRole === RIDE_ROLE.RIDER ? 'karma' : 'credit score'} points!`,
           { autoClose: 10000 }, // 10 seconds
         );
 
@@ -368,7 +368,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
             <span className="mt-2 text-xs">
               <strong className="uppercase">Note:</strong> Complete this
               feedback form to receive your{' '}
-              {userRole === USER_ROLE.RIDER ? 'karma points.' : 'credit score.'}
+              {userRole === RIDE_ROLE.RIDER ? 'karma points.' : 'credit score.'}
             </span>
           </div>
         )}
