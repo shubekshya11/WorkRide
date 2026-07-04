@@ -17,6 +17,7 @@ import {
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
 import { PrismaService } from '../prisma.service';
+import { fetchLeaderboardData } from '../utils/leaderboard.util';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import { RIDE_STATUS, USER_ROLE } from '../constants/enums';
@@ -38,7 +39,7 @@ import { AUTH_CONSTANTS } from '../constants/auth.constants';
 import { AuthenticatedRequest } from '../interfaces/types';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(JwtAuthGuard)
 export class AdminController {
   constructor(
     private readonly prisma: PrismaService,
@@ -891,6 +892,21 @@ export class AdminController {
       totalKarmaPoints: totalKarmaPoints._sum.karmaPoints || 0,
       totalCreditScore: totalCreditScore._sum.creditScore || 0,
     };
+  }
+
+  // ==================== LEADERBOARD ====================
+
+  @Get('leaderboard')
+  async getLeaderboard() {
+    const data = await fetchLeaderboardData(this.prisma);
+
+    this.logger.log({
+      level: 'info',
+      message: 'Admin fetched leaderboard data',
+      tag: 'admin',
+    });
+
+    return data;
   }
 
   // ==================== EMPLOYEE MANAGEMENT ====================

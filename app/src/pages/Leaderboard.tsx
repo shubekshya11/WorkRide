@@ -1,5 +1,4 @@
 // TODO: responsive and code quality improvements
-// TODO: fetch real data from backend instead of using mock data
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -14,65 +13,14 @@ import { MdOutlineLeaderboard } from 'react-icons/md';
 
 import { LeaderboardUser } from '../interfaces/types';
 import { RIDE_ROLE, LEADERBOARD_RANK } from '../constants/enums';
+import { API_LEADERBOARD } from '../constants/api';
 
 import CtoUI from '../components/ui/CtoUI';
 import StatusBadge from '../components/ui/StatusBadge';
 import UserDisplay from '../components/ui/UserDisplay';
 import LeaderboardFacts from '../components/ui/LeaderboardFacts';
 import Podium from '../components/ui/Podium';
-
-const MOCK_USERS = [
-  {
-    id: 1,
-    name: 'John Doe',
-    profilePicture:
-      'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: RIDE_ROLE.RIDER,
-    rides: 45,
-    karma: 2450,
-    feedback: 4.8,
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    profilePicture:
-      'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: RIDE_ROLE.RIDER,
-    rides: 38,
-    karma: 1950,
-    feedback: 4.9,
-  },
-  {
-    id: 3,
-    name: 'Mike Johnson',
-    profilePicture:
-      'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: RIDE_ROLE.RIDER,
-    rides: 32,
-    karma: 2180,
-    feedback: 4.6,
-  },
-  {
-    id: 4,
-    name: 'Sarah Wilson',
-    profilePicture:
-      'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: RIDE_ROLE.RIDER,
-    rides: 28,
-    karma: 1820,
-    feedback: 4.7,
-  },
-  {
-    id: 5,
-    name: 'David Brown',
-    profilePicture:
-      'https://avatars.githubusercontent.com/u/107195487?s=400&u=6120358cdcf760f65cfda7f81e982dfb1d8f7a27&v=4',
-    role: RIDE_ROLE.RIDER,
-    rides: 24,
-    karma: 1650,
-    feedback: 4.5,
-  },
-];
+import { apiFetch } from '../utils/api';
 
 const Leaderboard: React.FC = () => {
   const [topRiders, setTopRiders] = useState<LeaderboardUser[]>([]);
@@ -117,49 +65,91 @@ const Leaderboard: React.FC = () => {
   };
 
   useEffect(() => {
-    // Rides leaderboard
-    const riders = [...MOCK_USERS]
-      .sort((a, b) => b.rides - a.rides)
-      .map((user, idx) => ({
-        id: user.id,
-        name: user.name,
-        profilePicture: user.profilePicture,
-        role: user.role,
-        value: user.rides,
-        rank: idx + 1,
-        badge: getBadge(idx + 1),
-      }));
-    setTopRiders(riders);
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await apiFetch<{
+          topRiders: Array<{
+            id: number;
+            name: string;
+            profilePicture?: string;
+            role: string;
+            rides: number;
+            karma: number;
+            feedback: number;
+          }>;
+          topKarmaPoints: Array<{
+            id: number;
+            name: string;
+            profilePicture?: string;
+            role: string;
+            rides: number;
+            karma: number;
+            feedback: number;
+          }>;
+          topFeedback: Array<{
+            id: number;
+            name: string;
+            profilePicture?: string;
+            role: string;
+            rides: number;
+            karma: number;
+            feedback: number;
+          }>;
+        }>(`${import.meta.env.VITE_API_BASE_URL}${API_LEADERBOARD}`);
 
-    // Karma leaderboard
-    const karma = [...MOCK_USERS]
-      .sort((a, b) => b.karma - a.karma)
-      .map((user, idx) => ({
-        id: user.id,
-        name: user.name,
-        profilePicture: user.profilePicture,
-        role: user.role,
-        value: user.karma,
-        rank: idx + 1,
-        badge: getBadge(idx + 1),
-      }));
-    setTopKarmaPoints(karma);
+        // Rides leaderboard
+        const riders = response.topRiders
+          .sort((a, b) => b.rides - a.rides)
+          .map((user, idx) => ({
+            id: user.id,
+            name: user.name,
+            profilePicture: user.profilePicture,
+            role: user.role as RIDE_ROLE,
+            value: user.rides,
+            rank: idx + 1,
+            badge: getBadge(idx + 1),
+          }));
+        setTopRiders(riders);
 
-    // Feedback leaderboard
-    const feedback = [...MOCK_USERS]
-      .sort((a, b) => b.feedback - a.feedback)
-      .map((user, idx) => ({
-        id: user.id,
-        name: user.name,
-        profilePicture: user.profilePicture,
-        role: user.role,
-        value: user.feedback,
-        rank: idx + 1,
-        badge: getBadge(idx + 1),
-      }));
-    setTopFeedback(feedback);
+        // Karma leaderboard
+        const karma = response.topKarmaPoints
+          .sort((a, b) => b.karma - a.karma)
+          .map((user, idx) => ({
+            id: user.id,
+            name: user.name,
+            profilePicture: user.profilePicture,
+            role: user.role as RIDE_ROLE,
+            value: user.karma,
+            rank: idx + 1,
+            badge: getBadge(idx + 1),
+          }));
+        setTopKarmaPoints(karma);
 
-    setLoading(false);
+        // Feedback leaderboard
+        const feedback = response.topFeedback
+          .sort((a, b) => b.feedback - a.feedback)
+          .map((user, idx) => ({
+            id: user.id,
+            name: user.name,
+            profilePicture: user.profilePicture,
+            role: user.role as RIDE_ROLE,
+            value: user.feedback,
+            rank: idx + 1,
+            badge: getBadge(idx + 1),
+          }));
+        setTopFeedback(feedback);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard data:', error);
+        // Set empty arrays on error
+        setTopRiders([]);
+        setTopKarmaPoints([]);
+        setTopFeedback([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboardData();
   }, []);
 
   const getCurrentLeaderboard = () => {
@@ -308,7 +298,18 @@ const Leaderboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {getCurrentLeaderboard().map((user) => (
+                  {getCurrentLeaderboard().length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="px-4 py-8 text-center text-sm text-teal-700 dark:text-teal-200"
+                      >
+                        No entries yet. Complete rides and earn karma to appear
+                        on the leaderboard!
+                      </td>
+                    </tr>
+                  ) : (
+                    getCurrentLeaderboard().map((user) => (
                     <tr
                       key={user.id}
                       className="border-b transition-colors last:border-none hover:bg-teal-50 dark:border-teal-300/30 dark:hover:bg-teal-900"
@@ -354,7 +355,8 @@ const Leaderboard: React.FC = () => {
                         {user.badge && <StatusBadge rank={user.badge} />}
                       </td>
                     </tr>
-                  ))}
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

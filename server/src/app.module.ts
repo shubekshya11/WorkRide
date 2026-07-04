@@ -12,6 +12,7 @@ import { RideController } from './ride.controller';
 import { OnboardingController } from './onboarding/onboarding.controller';
 import { RiderApplicationController } from './rider-application/rider-application.controller';
 import { UploadController } from './upload/upload.controller';
+import { LeaderboardController } from './leaderboard.controller';
 
 import { AdminModule } from './admin/admin.module';
 
@@ -53,6 +54,7 @@ import { winstonLoggerConfig } from './logger.config';
     KarmaController,
     LogsController,
     RideController,
+    LeaderboardController,
   ],
   providers: [
     AppService,
