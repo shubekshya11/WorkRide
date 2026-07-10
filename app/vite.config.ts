@@ -18,6 +18,7 @@ export default defineConfig({
         'maskable-icon-512x512.png',
       ],
       manifest: {
+        id: '/',
         name: 'WorkRide - Sustainable Commuting',
         short_name: 'WorkRide',
         description:

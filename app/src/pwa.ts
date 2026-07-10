@@ -1,5 +1,9 @@
 import { registerSW } from 'virtual:pwa-register';
 
+import { initPwaInstallPrompt } from './lib/pwaInstallPrompt';
+
+initPwaInstallPrompt();
+
 export const updateSW = registerSW({
   immediate: true,
   onNeedRefresh() {

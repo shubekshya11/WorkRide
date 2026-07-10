@@ -1,51 +1,65 @@
 import { useEffect, useState } from 'react';
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => void;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+import {
+  isIosSafari,
+  isPwaInstalled,
+  isSecureInstallContext,
+  promptInstall,
+  subscribeToInstallPrompt,
+  type BeforeInstallPromptEvent,
+} from '../lib/pwaInstallPrompt';
+
+export type PwaInstallStatus =
+  | 'installed'
+  | 'ready'
+  | 'ios-manual'
+  | 'preparing'
+  | 'browser-menu'
+  | 'insecure';
 
 export const usePWA = () => {
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [isAppInstalled, setIsAppInstalled] = useState(isPwaInstalled());
+  const [swReady, setSwReady] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
-    };
-
-    const handleAppInstalled = () => {
+    if (isPwaInstalled()) {
       setIsAppInstalled(true);
-      setInstallPrompt(null);
-    };
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsAppInstalled(true);
+      return;
     }
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    const unsubscribe = subscribeToInstallPrompt((prompt) => {
+      setInstallPrompt(prompt);
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready
+        .then(() => setSwReady(true))
+        .catch(() => setSwReady(true));
+    } else {
+      setSwReady(true);
+    }
+
+    const timeoutId = window.setTimeout(() => setTimedOut(true), 8000);
 
     return () => {
-      window.removeEventListener(
-        'beforeinstallprompt',
-        handleBeforeInstallPrompt,
-      );
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      unsubscribe();
+      window.clearTimeout(timeoutId);
     };
   }, []);
 
-  const installApp = async (): Promise<boolean> => {
-    if (!installPrompt) return false;
+  const status: PwaInstallStatus = (() => {
+    if (isAppInstalled) return 'installed';
+    if (installPrompt) return 'ready';
+    if (!isSecureInstallContext()) return 'insecure';
+    if (isIosSafari()) return 'ios-manual';
+    if (!swReady && !timedOut) return 'preparing';
+    return 'browser-menu';
+  })();
 
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    setInstallPrompt(null);
+  const installApp = async (): Promise<boolean> => promptInstall();
 
-    return outcome === 'accepted';
-  };
-
-  return { installPrompt, isAppInstalled, installApp };
+  return { installPrompt, isAppInstalled, installApp, status };
 };

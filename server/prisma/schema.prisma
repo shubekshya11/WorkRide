@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -49,43 +43,32 @@ model User {
   riderApplication  RiderApplication?
 }
 
-enum UserRole {
-  USER
-  ADMIN
-}
-
-enum RiderApprovalStatus {
-  PENDING_RIDER_APPROVAL
-  APPROVED_RIDER
-  REJECTED_RIDER
-}
-
 model RiderApplication {
-  id                       Int                 @id @default(autoincrement())
-  userId                   Int                 @unique
-  user                     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  drivingLicenseNumber     String
-  drivingLicenseImageUrl   String
-  vehicleNumber            String
-  vehicleType              String
-  vehicleModel             String
-  vehicleColor             String
-  vehicleRegistrationUrl   String
-  status                   RiderApprovalStatus @default(PENDING_RIDER_APPROVAL)
-  rejectionReason          String?
-  reviewedAt               DateTime?
-  reviewedById             Int?
-  createdAt                DateTime            @default(now())
-  updatedAt                DateTime            @updatedAt
+  id                     Int                 @id @default(autoincrement())
+  userId                 Int                 @unique
+  drivingLicenseNumber   String
+  drivingLicenseImageUrl String
+  vehicleNumber          String
+  vehicleType            String
+  vehicleModel           String
+  vehicleColor           String
+  vehicleRegistrationUrl String
+  status                 RiderApprovalStatus @default(PENDING_RIDER_APPROVAL)
+  rejectionReason        String?
+  reviewedAt             DateTime?
+  reviewedById           Int?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([token])
@@ -102,65 +85,55 @@ model Ride {
   message                String?
   role                   String
   timestamp              DateTime      @default(now())
-  createdBy              Int // ID of user who created the ride (could be passenger or rider)
+  createdBy              Int
+  estimatedTimeOfArrival Int?
+  riderId                Int?
+  passengerId            Int?
+  status                 RideStatus    @default(ACTIVE)
+  distance               Float?
+  co2Saved               Float?
+  peopleImpacted         Int?
+  matchGroupId           String?
+  feedback               Feedback[]
+  messages               Message[]
+  ratings                Rating[]
   createdByUser          User          @relation("CreatedUser", fields: [createdBy], references: [id])
   rider                  User?         @relation("RiderRides", fields: [riderId], references: [id])
-  estimatedTimeOfArrival Int? // ETA in minutes
-  riderId                Int? // Made optional since it can be null for passenger-created rides
-  passengerId            Int? // ID of the passenger who requested the ride (if applicable)
   requests               RideRequest[]
   passengers             User[]        @relation("RidePassengers")
-  ratings                Rating[]
-  messages               Message[]
-  feedback               Feedback[]
-  status                 RideStatus    @default(ACTIVE)
-  distance               Float? // Distance in kilometers, calculated when ride is confirmed
-  co2Saved               Float? // CO2 saved in kg
-  peopleImpacted         Int? // Number of people impacted (passengers)
-  matchGroupId           String? // UUID to group matched rides together
-}
-
-enum RideStatus {
-  IDLE
-  ACTIVE
-  CONFIRMED
-  REJECTED
-  EXPIRED
-  CANCELLED
-  COMPLETED
 }
 
 model RideRequest {
   id          Int      @id @default(autoincrement())
-  ride        Ride     @relation(fields: [rideId], references: [id])
   rideId      Int
-  passenger   User     @relation(fields: [passengerId], references: [id])
   passengerId Int
-  status      String // pending, accepted, rejected
+  status      String
   createdAt   DateTime @default(now())
+  passenger   User     @relation(fields: [passengerId], references: [id])
+  ride        Ride     @relation(fields: [rideId], references: [id])
 }
 
 model Rating {
   id         Int      @id @default(autoincrement())
-  ride       Ride     @relation(fields: [rideId], references: [id])
   rideId     Int
-  fromUser   User     @relation("FromUser", fields: [fromUserId], references: [id])
   fromUserId Int
-  toUser     User     @relation("ToUser", fields: [toUserId], references: [id])
   toUserId   Int
   score      Int
   comment    String?
   createdAt  DateTime @default(now())
+  fromUser   User     @relation("FromUser", fields: [fromUserId], references: [id])
+  ride       Ride     @relation(fields: [rideId], references: [id])
+  toUser     User     @relation("ToUser", fields: [toUserId], references: [id])
 }
 
 model Message {
   id        Int      @id @default(autoincrement())
   content   String
-  sender    User     @relation("UserMessages", fields: [senderId], references: [id])
   senderId  Int
-  ride      Ride?    @relation(fields: [rideId], references: [id])
   rideId    Int?
   createdAt DateTime @default(now())
+  ride      Ride?    @relation(fields: [rideId], references: [id])
+  sender    User     @relation("UserMessages", fields: [senderId], references: [id])
 }
 
 model KarmaTransaction {
@@ -176,6 +149,9 @@ model KarmaTransaction {
   expiresAt      DateTime?
   usedAt         DateTime?
   createdAt      DateTime          @default(now())
+
+  @@index([userId])
+  @@index([redemptionCode])
 }
 
 model Feedback {
@@ -192,6 +168,27 @@ model Feedback {
   createdAt  DateTime @default(now())
 
   @@unique([rideId, fromUserId, toUserId]) // Prevent duplicate feedback
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum RiderApprovalStatus {
+  PENDING_RIDER_APPROVAL
+  APPROVED_RIDER
+  REJECTED_RIDER
+}
+
+enum RideStatus {
+  IDLE
+  ACTIVE
+  CONFIRMED
+  REJECTED
+  EXPIRED
+  CANCELLED
+  COMPLETED
 }
 
 enum RedemptionStatus {
