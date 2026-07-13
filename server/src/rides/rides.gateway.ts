@@ -7,7 +7,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Ride } from 'generated/prisma';
+import { Ride } from '@prisma/client';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 

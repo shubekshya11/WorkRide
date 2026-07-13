@@ -20,7 +20,7 @@ import {
 } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
-import { Ride, User, Feedback } from 'generated/prisma';
+import { Ride, User, Feedback } from '@prisma/client';
 
 import { PrismaService } from './prisma.service';
 import { KarmaCalculationService } from './services/karma-calculation.service';

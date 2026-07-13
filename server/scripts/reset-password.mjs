@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
-import { PrismaClient } from '../generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const SALT_ROUNDS = 12;

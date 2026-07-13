@@ -7,21 +7,6 @@ const LogoBrand = () => {
   return (
     <section id="logo" className="space-y-10 py-10 md:space-y-16 md:py-20">
       <div className="space-y-5 md:space-y-10">
-        <p className="text-sm">
-          The logo is thoughtfully designed by{' '}
-          <a
-            href="https://purnashrestha.com.np"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-teal-600 hover:underline"
-          >
-            Purna Shrestha
-          </a>{' '}
-          on December 2024. It embodies a modern and minimalist aesthetic,
-          reflecting the core values and identity of our brand. Consistent
-          application of the logo across all platforms and materials is
-          essential to ensure strong and cohesive brand recognition.
-        </p>
         <div
           className={`relative flex h-56 w-full items-center justify-center md:h-64 lg:h-96 ${toggleLogo ? 'bg-light' : 'bg-dark'} rounded-b-[2rem] transition-all duration-100`}
         >

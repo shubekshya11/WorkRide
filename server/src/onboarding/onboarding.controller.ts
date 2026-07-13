@@ -10,7 +10,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma.service';

@@ -7,7 +7,7 @@
 
 import { Injectable, Inject } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
-import { Ride, User } from 'generated/prisma';
+import { Ride, User } from '@prisma/client';
 
 import { RIDE_ROLE } from '../constants/enums';
 import {
