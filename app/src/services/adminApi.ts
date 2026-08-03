@@ -1,4 +1,5 @@
-import { getAdminAccessToken } from '../utils/adminAuth';
+import { clearAdminAuth, getAdminAccessToken } from '../utils/adminAuth';
+import { ROUTE_ADMIN_LOGIN } from '../constants/routes';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -126,11 +127,16 @@ class AdminApiService {
       });
 
       if (!response.ok) {
-        if (response.status === 403) {
-          throw new Error('Access denied. Admin privileges required.');
-        }
-        if (response.status === 401) {
-          throw new Error('Authentication required. Please login again.');
+        if (response.status === 401 || response.status === 403) {
+          clearAdminAuth();
+          if (typeof window !== 'undefined' && !window.location.pathname.includes(ROUTE_ADMIN_LOGIN)) {
+            window.location.assign(ROUTE_ADMIN_LOGIN);
+          }
+          throw new Error(
+            response.status === 403
+              ? 'Access denied. Admin privileges required.'
+              : 'Session expired. Please login again.',
+          );
         }
         throw new Error(`Request failed: ${response.statusText}`);
       }

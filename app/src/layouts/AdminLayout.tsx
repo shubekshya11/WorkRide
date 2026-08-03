@@ -14,7 +14,7 @@ import {
   Building2,
 } from 'lucide-react';
 
-import { useAuth } from '../hooks/useAuth';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 
 import {
   ROUTE_ADMIN_DASHBOARD,
@@ -24,7 +24,7 @@ import {
   ROUTE_ADMIN_LOGS,
   ROUTE_ADMIN_SETTINGS,
   ROUTE_ADMIN_RIDER_APPROVALS,
-  ROUTE_LOGIN,
+  ROUTE_ADMIN_LOGIN,
   ROUTE_ADMIN_USERS,
 } from '../constants/routes';
 
@@ -34,7 +34,7 @@ const AdminLayout: React.FC = () => {
   );
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout } = useAdminAuth();
 
   useEffect(() => {
     const handleResize = () => {
@@ -59,7 +59,7 @@ const AdminLayout: React.FC = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate(ROUTE_LOGIN);
+    navigate(ROUTE_ADMIN_LOGIN);
   };
 
   return (

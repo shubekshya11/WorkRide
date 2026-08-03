@@ -42,6 +42,7 @@ import { winstonLoggerConfig } from './logger.config';
         secret: configService.get<string>('JWT_SECRET') || '',
         signOptions: {
           expiresIn: (configService.get<string>('JWT_EXPIRES_IN') ||
+            configService.get<string>('JWT_EXPIRATION') ||
             '1h') as StringValue,
         },
       }),

@@ -39,7 +39,7 @@ import { AUTH_CONSTANTS } from '../constants/auth.constants';
 import { AuthenticatedRequest } from '../interfaces/types';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminController {
   constructor(
     private readonly prisma: PrismaService,

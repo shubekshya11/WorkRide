@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 
 import type { StoredUserData } from '../interfaces/types';
 
-import { getStoredAdminUser, isAuthenticated as hasAdminAuthTokens } from '../utils/adminAuth';
+import { getStoredAdminUser, isAuthenticated as hasAdminAuthTokens, clearAdminAuth } from '../utils/adminAuth';
 import { adminLogoutUser } from '../utils/adminAuthApi';
 
 export interface AdminAuthContextType {
@@ -28,6 +28,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error('Admin logout error:', error);
       // Continue with local cleanup even if server call fails
     } finally {
+      clearAdminAuth();
       setUser(null);
     }
   };

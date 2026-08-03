@@ -30,6 +30,7 @@ interface DashboardStats {
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadDashboardStats();
@@ -38,11 +39,15 @@ const AdminDashboard: React.FC = () => {
   const loadDashboardStats = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await adminApi.getDashboardStats();
       setStats(data);
-    } catch (error) {
-      console.error('Failed to load dashboard stats:', error);
-      toast.error('Failed to load dashboard statistics');
+    } catch (err) {
+      console.error('Failed to load dashboard stats:', err);
+      const message =
+        err instanceof Error ? err.message : 'Failed to load dashboard statistics';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -82,8 +87,15 @@ const AdminDashboard: React.FC = () => {
 
   if (!stats) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Failed to load dashboard statistics</p>
+      <div className="text-center py-12 space-y-4">
+        <p className="text-gray-500">{error || 'Failed to load dashboard statistics'}</p>
+        <button
+          type="button"
+          onClick={loadDashboardStats}
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+        >
+          Retry
+        </button>
       </div>
     );
   }

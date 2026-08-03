@@ -25,6 +25,7 @@ export class AuthService {
       {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: (this.configService.get<string>('JWT_EXPIRES_IN') ||
+          this.configService.get<string>('JWT_EXPIRATION') ||
           '1h') as StringValue,
       },
     );
@@ -40,6 +41,7 @@ export class AuthService {
       {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: (this.configService.get<string>('JWT_EXPIRES_IN') ||
+          this.configService.get<string>('JWT_EXPIRATION') ||
           '1h') as StringValue,
       },
     );
