@@ -10,12 +10,12 @@ const AboutInfo = () => {
     <>
       <section className="relative z-10 h-auto bg-teal-100 bg-[radial-gradient(circle,_#C4B5D9_12%,_transparent_12%),_radial-gradient(circle,_#F5F0E8_12%,_transparent_12%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px] px-0 py-0 xl:h-screen">
         <div className="pointer-events-none absolute inset-0 -z-10 size-full select-none bg-gradient-to-b from-teal-100 via-transparent to-teal-200"></div>
-        <div className="flex h-full flex-col justify-between gap-0 sm:gap-16 md:items-center xl:flex-row xl:gap-0">
+        <div className="flex h-full flex-col items-center justify-center">
           {/* <img
             src={nepal}
             className="absolute inset-0 -z-10 size-full scale-75 mix-blend-overlay"
           /> */}
-          <div className="order-1 flex size-full max-w-4xl flex-col items-center justify-center gap-4 px-6 pb-12 text-center sm:pb-0 md:order-2">
+          <div className="flex w-full max-w-4xl flex-col items-center justify-center gap-4 px-6 py-12 text-center">
             <CareOurEarth />
 
             <h2 className="mt-4 text-2xl font-bold capitalize leading-snug md:text-4xl md:leading-snug lg:text-5xl lg:leading-snug">
