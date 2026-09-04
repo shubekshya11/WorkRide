@@ -289,10 +289,69 @@ export class RideController {
     }
 
     // Check if ride exists and is completed
-    const ride = await this.prisma.ride.findUnique({
+    let ride = await this.prisma.ride.findUnique({
       where: { id: body.rideId },
       include: { rider: true, passengers: true },
     });
+
+    this.logger.log({
+      level: 'info',
+      message: `Feedback submission - initial ride lookup`,
+      tag: 'feedback',
+      rideId: body.rideId,
+      rideExists: !!ride,
+      rideStatus: ride?.status,
+      rideRiderId: ride?.riderId,
+      ridePassengerId: ride?.passengerId,
+      matchGroupId: ride?.matchGroupId,
+      authenticatedUserId,
+      toUserId: body.toUserId,
+    });
+
+    // If ride doesn't exist or user is not part of it, try to find the other ride in the match group
+    if (!ride || (ride.riderId !== authenticatedUserId && ride.passengerId !== authenticatedUserId)) {
+      this.logger.log({
+        level: 'info',
+        message: `User not part of queried ride or ride not found, checking match group`,
+        tag: 'feedback',
+        rideId: body.rideId,
+        authenticatedUserId,
+      });
+
+      // Try to find a ride in the same match group where the user is a participant
+      if (ride?.matchGroupId) {
+        const ridesInMatchGroup = await this.prisma.ride.findMany({
+          where: { matchGroupId: ride.matchGroupId },
+          include: { rider: true, passengers: true },
+        });
+
+        this.logger.log({
+          level: 'info',
+          message: `Found rides in match group`,
+          tag: 'feedback',
+          matchGroupId: ride.matchGroupId,
+          ridesCount: ridesInMatchGroup.length,
+          rideIds: ridesInMatchGroup.map(r => r.id),
+        });
+
+        // Find a ride where the user is either rider or passenger
+        const userRide = ridesInMatchGroup.find(
+          r => r.riderId === authenticatedUserId || r.passengerId === authenticatedUserId
+        );
+
+        if (userRide) {
+          this.logger.log({
+            level: 'info',
+            message: `Found user's ride in match group, switching to that ride`,
+            tag: 'feedback',
+            originalRideId: body.rideId,
+            userRideId: userRide.id,
+            userRideStatus: userRide.status,
+          });
+          ride = userRide;
+        }
+      }
+    }
 
     if (!ride) {
       throw new NotFoundException('Ride not found');
@@ -300,6 +359,14 @@ export class RideController {
 
     // Only allow feedback for completed rides
     if (ride.status !== RIDE_STATUS.COMPLETED) {
+      this.logger.log({
+        level: 'warn',
+        message: `Feedback submission failed - ride not completed`,
+        tag: 'feedback',
+        rideId: ride.id,
+        currentStatus: ride.status,
+        requiredStatus: RIDE_STATUS.COMPLETED,
+      });
       throw new BadRequestException(
         'Feedback can only be submitted for completed rides',
       );
@@ -308,6 +375,18 @@ export class RideController {
     // Verify that authenticated user is part of this ride
     const isRider = ride.riderId === authenticatedUserId;
     const isPassenger = ride.passengerId === authenticatedUserId;
+
+    this.logger.log({
+      level: 'info',
+      message: `Feedback submission - user role verification`,
+      tag: 'feedback',
+      authenticatedUserId,
+      rideRiderId: ride.riderId,
+      ridePassengerId: ride.passengerId,
+      isRider,
+      isPassenger,
+      isPartOfRide: isRider || isPassenger,
+    });
 
     if (!isRider && !isPassenger) {
       throw new BadRequestException('User is not part of this ride');
@@ -1343,9 +1422,35 @@ export class RideController {
       rider: User | null;
       createdByUser: User | null;
     })[];
+    
+    this.logger.log({
+      level: 'info',
+      message: `Attempting to complete ride - checking matchGroupId`,
+      tag: 'ride',
+      rideId,
+      matchGroupId: ride.matchGroupId,
+      hasMatchGroupId: !!ride.matchGroupId,
+    });
+
     if (ride.matchGroupId) {
+      // First, fetch all rides with this matchGroupId to see what will be updated
+      const ridesInMatchGroup = await this.prisma.ride.findMany({
+        where: { matchGroupId: ride.matchGroupId },
+        select: { id: true, status: true, riderId: true, passengerId: true },
+      });
+
+      this.logger.log({
+        level: 'info',
+        message: `Found rides in match group before update`,
+        tag: 'ride',
+        matchGroupId: ride.matchGroupId,
+        ridesInGroup: ridesInMatchGroup.length,
+        rideIds: ridesInMatchGroup.map(r => r.id),
+        currentStatuses: ridesInMatchGroup.map(r => ({ id: r.id, status: r.status })),
+      });
+
       // Update all rides with the same matchGroupId
-      await this.prisma.ride.updateMany({
+      const updateResult = await this.prisma.ride.updateMany({
         where: { matchGroupId: ride.matchGroupId },
         data: {
           status: RIDE_STATUS.COMPLETED,
@@ -1353,6 +1458,14 @@ export class RideController {
           co2Saved,
           peopleImpacted,
         },
+      });
+
+      this.logger.log({
+        level: 'info',
+        message: `Updated rides in match group`,
+        tag: 'ride',
+        matchGroupId: ride.matchGroupId,
+        updateCount: updateResult.count,
       });
 
       // Fetch the updated rides for response
@@ -1364,8 +1477,23 @@ export class RideController {
           createdByUser: true,
         },
       });
+
+      this.logger.log({
+        level: 'info',
+        message: `Fetched updated rides after completion`,
+        tag: 'ride',
+        updatedRidesCount: updatedRides.length,
+        updatedStatuses: updatedRides.map(r => ({ id: r.id, status: r.status })),
+      });
     } else {
       // Fallback: update only the current ride if no matchGroupId
+      this.logger.log({
+        level: 'warn',
+        message: `No matchGroupId found - updating single ride only`,
+        tag: 'ride',
+        rideId,
+      });
+      
       const updatedRide = await this.prisma.ride.update({
         where: { id: rideId },
         data: {

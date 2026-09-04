@@ -47,17 +47,7 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          {/* <p className="text-sm">
-            Developed by:{' '}
-            <a
-              href="https://www.purnashrestha.com.np"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-base hover:underline"
-            >
-              Purna Shrestha
-            </a>
-          </p> */}
+          {}
         </div>
       </footer>
     </>

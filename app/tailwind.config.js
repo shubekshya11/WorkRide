@@ -33,8 +33,7 @@ module.exports = {
       },
       fontFamily: {
         body: [
-          // 'purna_shrestha',
-          // 'Syne',
+          
           '"Bricolage Grotesque"',
           'ui-sans-serif',
           'system-ui',

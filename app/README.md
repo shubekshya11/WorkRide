@@ -137,12 +137,6 @@ pnpm i react-hook-form yup @hookform/resolvers react-toastify
 
 ---
 
-## Team Members
-
-- **[Purna Shrestha](https://www.purnashrestha.com.np)** - _Frontend Developer_ - _UI/UX Designer_
-
----
-
 ## License
 
 All the assets, and codes used in this project are the propety of `WorkRide`. Use of any of the assets, codes, and designs without the permission of the owner is strictly prohibited.
