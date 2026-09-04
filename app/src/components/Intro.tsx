@@ -3,9 +3,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Title from './ui/Title';
 import rideBuddy from '../assets/ride.webp';
-import introVideo from '../assets/videos/demo.mp4';
+// import introVideo from '../assets/videos/demo.mp4';
 import iPhoneMockup from '../assets/mockups/iPhone.webp';
-import introPoster from '../assets/mockups/imagePoster.webp';
+// import introPoster from '../assets/mockups/imagePoster.webp';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,7 +63,7 @@ const Intro = () => {
           className="relative order-1 flex flex-1 justify-center lg:order-2"
         >
           <div className="-translate-y-8">
-            <video
+            {/* <video
               playsInline
               webkit-playsinline="true"
               src={introVideo}
@@ -79,7 +79,7 @@ const Intro = () => {
                 label="English Captions"
                 default
               />
-            </video>
+            </video> */}
             <img
               src={iPhoneMockup}
               alt="WorkRide"
